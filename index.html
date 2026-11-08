@@ -1,554 +1,170 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090909">
-<title>NIJI APORIA — Master Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090909">
+    <title>NIJI APERIA - Master Admin</title>
+    <!-- خطوط جوجل -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+    <!-- مكتبة Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- ملف الإعدادات الخاص بك -->
+    <script src="config.js" defer></script>
+    
+    <style>
+        :root {
+            --bg: #090909;
+            --panel: #121212;
+            --panel2: #191919;
+            --gold: #c0a46c;
+            --gold2: #aadbe0;
+            --text: #eee9df;
+            --muted: #999;
+            --line: rgba(190, 164, 92, 22);
+            --green: #52b788;
+            --red: #b66b4b;
+            --blue: #77a9d9;
+        }
 
-<style>
-:root{
---bg:#090909;--panel:#121212;--panel2:#191919;
---gold:#c6a45c;--gold2:#ead6a0;
---text:#eee9df;--muted:#999;
---line:rgba(198,164,92,.22);
---green:#52b788;--red:#d66b6b;--blue:#77a9d9;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:Cairo,sans-serif;line-height:1.8}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-a{color:inherit;text-decoration:none}
-.hidden{display:none!important}
-.container{width:min(1200px,94%);margin:auto}
-header{background:#0c0c0c;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
-.nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:15px}
-.logo{font-family:'Cormorant Garamond';font-size:27px;color:var(--gold);direction:ltr;letter-spacing:2px}
-nav{display:flex;gap:18px;flex-wrap:wrap}
-nav a{font-size:13px;color:#ccc}
-.btn{background:transparent;color:var(--gold);border:1px solid var(--gold);padding:8px 15px;border-radius:3px}
-.btn:hover,.primary{background:var(--gold);color:#090909}
-.hero{text-align:center;padding:95px 15px;background:radial-gradient(ellipse,#292116,#090909 70%);border-bottom:1px solid var(--line)}
-.hero h1{font:700 clamp(42px,8vw,85px) 'Cormorant Garamond';color:var(--gold2);direction:ltr}
-.hero p{color:#aaa;max-width:650px;margin:15px auto 25px}
-.section{padding:65px 0}
-.heading{text-align:center;margin-bottom:30px}
-.heading small{color:var(--gold);letter-spacing:3px}
-.heading h2{font-size:26px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.card,.panel,.stat{background:var(--panel);border:1px solid var(--line);padding:20px;border-radius:4px}
-.card h3,.panel h3{color:var(--gold);margin-bottom:10px}
-.card p{color:var(--muted);font-size:13px}
-.field{width:100%;background:#191919;border:1px solid #39332a;color:white;padding:11px;margin:6px 0;border-radius:3px}
-.toolbar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
-.toolbar>*{flex:1}
-.books{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.book{background:var(--panel);border:1px solid var(--line);padding:18px}
-.cover{height:130px;display:grid;place-items:center;background:linear-gradient(145deg,#302719,#090909);color:var(--gold);font:25px 'Cormorant Garamond';margin-bottom:12px}
-.gold{color:var(--gold)}
-.muted{color:var(--muted)}
-footer{text-align:center;padding:35px;border-top:1px solid var(--line);color:#888}
-.modal{position:fixed;inset:0;background:#000d;z-index:50;display:none;place-items:center;padding:15px}
-.modal.open{display:grid}
-.modalbox{background:#151515;border:1px solid var(--gold);padding:25px;width:min(430px,100%)}
-.modalbox h2{color:var(--gold)}
-#adminSection{background:#0b0b0b;border-top:2px solid var(--gold)}
-.admin-header{padding:35px 0 20px}
-.admin-header h2{color:var(--gold);font-size:29px}
-.admin-nav{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
-.admin-nav button{padding:9px 13px;background:#171717;color:#ccc;border:1px solid var(--line);border-radius:3px}
-.admin-nav button.active{background:var(--gold);color:#000}
-.stat{min-height:115px}
-.stat small{color:var(--muted)}
-.stat strong{display:block;font-size:25px;color:var(--gold);direction:ltr;text-align:right}
-.table-wrap{overflow-x:auto;margin-top:15px}
-table{width:100%;border-collapse:collapse;min-width:600px;font-size:12px}
-td,th{padding:12px;border-bottom:1px solid var(--line);text-align:right}
-th{color:var(--gold);background:#191919}
-.badge{padding:3px 8px;border:1px solid var(--line);color:var(--gold);font-size:11px}
-.action{padding:5px 9px;border:1px solid var(--line);background:#191919;color:var(--gold);margin:2px}
-.message{white-space:pre-wrap;color:var(--gold);font-size:13px;margin:10px 0}
-.panel{margin-bottom:15px}
-.panel input,.panel textarea,.panel select{max-width:600px}
-.tabs-content{padding-bottom:50px}
-@media(max-width:800px){
-.grid,.books{grid-template-columns:repeat(2,1fr)}
-nav{display:none}
-}
-@media(max-width:520px){
-.grid,.books{grid-template-columns:1fr}
-.hero{padding:65px 12px}
-}
-</style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text); font-family: 'Cairo', sans-serif; line-height: 1.6; }
+        button, input, select, textarea { font: inherit; }
+        button { cursor: pointer; }
+        a { color: inherit; text-decoration: none; }
+        .hidden { display: none !important; }
+        .container { width: min(1200px, 94%); margin: auto; }
+
+        header {
+            background: var(--panel);
+            border-bottom: 1px solid var(--line);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .nav {
+            min-height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .logo { font-family: 'Cormorant Garamond', serif; font-size: 27px; color: var(--gold); letter-spacing: 2px; }
+        
+        .btn {
+            background: transparent;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+        .btn:hover, .btn-primary { background: var(--gold); color: #090909; }
+
+        .hero {
+            text-align: center;
+            padding: 95px 15px;
+            background: radial-gradient(ellipse, #252116, #090909 70%);
+            border-bottom: 1px solid var(--line);
+        }
+        .hero h1 { font: 700 clamp(42px, 5vw, 55px) 'Cormorant Garamond'; color: var(--gold); margin-bottom: 15px; }
+        .hero p { color: var(--muted); max-width: 450px; margin: 15px auto 25px; }
+
+        /* نافذة تسجيل الدخول المنبثقة (Modal) */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 50;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+        .modal.open { display: flex; }
+        .modal-box {
+            background: var(--panel2);
+            border: 1px solid var(--gold);
+            padding: 25px;
+            width: min(400px, 100%);
+            border-radius: 8px;
+        }
+        .modal-box h2 { color: var(--gold); margin-bottom: 15px; font-size: 22px; }
+        .field { width: 100%; background: #191919; border: 1px solid #39332a; color: white; padding: 11px; margin: 10px 0; border-radius: 4px; }
+    </style>
 </head>
-
 <body>
 
-<header>
-<div class="container nav">
-<a class="logo" href="#">NIJI APORIA</a>
-<nav>
-<a href="#home">الرئيسية</a>
-<a href="#domains">المعرفة</a>
-<a href="#library">المكتبة</a>
-<a href="#account">حسابي</a>
-</nav>
-<button class="btn" onclick="openAuth()">الدخول / التسجيل</button>
-</div>
-</header>
+    <header>
+        <div class="container nav">
+            <div class="logo">NIJI APERIA</div>
+            <!-- تم إضافة المعرف loginBtn هنا لضمان الاستجابة -->
+            <button id="loginBtn" class="btn">تسجيل الدخول</button>
+        </div>
+    </header>
 
-<main>
+    <main class="hero">
+        <div class="container">
+            <h1>لوحة التحكم الرئيسية</h1>
+            <p>مرحباً بك في نظام الإدارة الخاص بك. اضغط على زر تسجيل الدخول للبدء.</p>
+        </div>
+    </main>
 
-<section class="hero" id="home">
-<div class="container">
-<small class="gold">AN INDEPENDENT KNOWLEDGE UNIVERSE</small>
-<h1>NIJI APORIA</h1>
-<h2>فن التساؤل وما وراء حدود المعرفة</h2>
-<p>موسوعة مستقلة للفلسفة والعلوم والتاريخ والأدب والمعرفة الإنسانية.</p>
-<a class="btn primary" href="#library">اكتشف المكتبة</a>
-</div>
-</section>
+    <!-- نافذة تسجيل الدخول (Modal) -->
+    <div id="loginModal" class="modal">
+        <div class="modal-box">
+            <h2>تسجيل الدخول</h2>
+            <form id="loginForm">
+                <input type="email" id="email" placeholder="البريد الإلكتروني" class="field" required>
+                <input type="password" id="password" placeholder="كلمة المرور" class="field" required>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">دخول</button>
+                <button type="button" id="closeModal" class="btn" style="width: 100%; margin-top: 8px; border-color: var(--muted); color: var(--muted);">إلغاء</button>
+            </form>
+        </div>
+    </div>
 
-<section class="section" id="domains">
-<div class="container">
-<div class="heading">
-<small>KNOWLEDGE DOMAINS</small>
-<h2>أبواب المعرفة</h2>
-</div>
-<div class="grid">
-<div class="card"><h3>الفلسفة</h3><p>الميتافيزيقا والمنطق والأخلاق.</p></div>
-<div class="card"><h3>الوجود والوعي</h3><p>الذات والحرية ومعنى الحياة.</p></div>
-<div class="card"><h3>العلوم</h3><p>الفيزياء والرياضيات والأحياء.</p></div>
-<div class="card"><h3>علم النفس</h3><p>العقل والسلوك والإدراك.</p></div>
-<div class="card"><h3>التاريخ</h3><p>الحضارات وتاريخ الأفكار.</p></div>
-<div class="card"><h3>الأدب</h3><p>اللغة والفنون والثقافة.</p></div>
-</div>
-</div>
-</section>
+    <script>
+        // كود برمجي آمن للتحكم بظهور واختفاء نافذة تسجيل الدخول عند الضغط على الزر
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeModal = document.getElementById('closeModal');
+        const loginForm = document.getElementById('loginForm');
 
-<section class="section" id="library">
-<div class="container">
-<div class="heading">
-<small>DIGITAL LIBRARY</small>
-<h2>المكتبة الرقمية</h2>
-</div>
-<div class="toolbar">
-<input id="bookSearch" class="field" placeholder="البحث عن كتاب..." oninput="renderBooks()">
-<select id="bookFilter" class="field" onchange="renderBooks()">
-<option value="">جميع الكتب</option>
-<option value="free">مجاني</option>
-<option value="paid">مدفوع</option>
-</select>
-</div>
-<div class="books" id="bookList"></div>
-<p id="bookMessage" class="message"></p>
-</div>
-</section>
+        // فتح النافذة عند الضغط على زر تسجيل الدخول
+        loginBtn.addEventListener('click', () => {
+            loginModal.classList.add('open');
+        });
 
-<section class="section" id="account">
-<div class="container">
-<div class="heading">
-<small>YOUR ACCOUNT</small>
-<h2>مساحتك الخاصة</h2>
-</div>
-<div class="panel">
-<div id="signedOut">
-<p>سجّل الدخول للوصول إلى حسابك.</p>
-<button class="btn primary" onclick="openAuth()">تسجيل الدخول</button>
-</div>
-<div id="signedIn" class="hidden">
-<h3 id="profileName">حسابك</h3>
-<p id="profileEmail"></p>
-<p id="profileRole" class="gold"></p>
-<button class="btn" onclick="signOut()">تسجيل الخروج</button>
-</div>
-</div>
-</div>
-</section>
+        // إغلاق النافذة عند الضغط على زر الإلغاء
+        closeModal.addEventListener('click', () => {
+            loginModal.classList.remove('open');
+        });
 
-<section id="adminSection" class="hidden">
-<div class="container">
-<div class="admin-header">
-<small class="gold">NIJI APORIA / CONTROL CENTER</small>
-<h2>MASTER ADMIN</h2>
-<p class="muted">مركز الإدارة والتحكم الكامل بالمنصة</p>
-</div>
+        // إغلاق النافذة عند النقر خارج صندوق الدخول
+        loginModal.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.classList.remove('open');
+            }
+        });
 
-<div class="grid" id="adminStats">
-<div class="stat"><small>المستخدمون</small><strong id="sUsers">—</strong></div>
-<div class="stat"><small>الكتب المنشورة</small><strong id="sBooks">—</strong></div>
-<div class="stat"><small>الطلبات المدفوعة</small><strong id="sOrders">—</strong></div>
-<div class="stat"><small>إجمالي المبيعات المسجلة (دج)</small><strong id="sSales">—</strong></div>
-<div class="stat"><small>عمولات المنصة المسجلة (دج)</small><strong id="sProfit">—</strong></div>
-<div class="stat"><small>طلبات السحب المعلقة</small><strong id="sWithdrawals">—</strong></div>
-</div>
-
-<div class="admin-nav">
-<button class="active" onclick="showTab('dashboard',this)">الرئيسية</button>
-<button onclick="showTab('users',this)">المستخدمون</button>
-<button onclick="showTab('books',this)">الكتب</button>
-<button onclick="showTab('orders',this)">الطلبات والمبيعات</button>
-<button onclick="showTab('commissions',this)">الأرباح والعمولات</button>
-<button onclick="showTab('withdrawals',this)">السحوبات</button>
-<button onclick="showTab('applications',this)">المؤلفون</button>
-<button onclick="showTab('transactions',this)">المدفوعات</button>
-<button onclick="showTab('settings',this)">إعدادات الموقع</button>
-<button onclick="showTab('logs',this)">سجل الإدارة</button>
-</div>
-
-<div class="tabs-content">
-
-<div id="tab-dashboard">
-<div class="panel">
-<h3>نظرة عامة</h3>
-<p class="muted">هذه الإحصائيات مستخرجة من قاعدة البيانات. لا تمثل أرقاماً تقديرية.</p>
-<p id="dashboardMessage" class="message">جارٍ تحميل البيانات...</p>
-</div>
-<div class="panel">
-<h3>آخر الطلبات</h3>
-<div id="recentOrders"></div>
-</div>
-</div>
-
-<div id="tab-users" class="hidden">
-<div class="panel">
-<h3>إدارة المستخدمين</h3>
-<input class="field" id="userSearch" placeholder="البحث بالبريد أو الاسم" oninput="renderUsers()">
-<div id="usersTable"></div>
-</div>
-</div>
-
-<div id="tab-books" class="hidden">
-<div class="panel">
-<h3>إضافة كتاب جديد</h3>
-<input class="field" id="bTitle" placeholder="عنوان الكتاب">
-<input class="field" id="bSlug" placeholder="الرابط المختصر (يُنشأ تلقائياً إذا تركته فارغاً)">
-<input class="field" id="bAuthor" placeholder="وصف الكتاب أو اسم المؤلف">
-<textarea class="field" id="bDescription" placeholder="وصف تفصيلي" rows="3"></textarea>
-<select class="field" id="bCategory"></select>
-<select class="field" id="bFree">
-<option value="true">مجاني</option>
-<option value="false">مدفوع</option>
-</select>
-<input class="field" type="number" id="bPrice" placeholder="السعر بالدينار الجزائري">
-<input class="field" id="bCover" placeholder="مسار صورة الغلاف (اختياري)">
-<select class="field" id="bStatus">
-<option value="draft">مسودة</option>
-<option value="published">نشر مباشرة</option>
-</select>
-<button class="btn primary" onclick="addBook()">حفظ الكتاب</button>
-<p id="bookAdminMessage" class="message"></p>
-</div>
-<div class="panel">
-<h3>إدارة الكتب الحالية</h3>
-<div id="booksTable"></div>
-</div>
-</div>
-
-<div id="tab-orders" class="hidden">
-<div class="panel">
-<h3>الطلبات والمبيعات</h3>
-<div id="ordersTable"></div>
-</div>
-</div>
-
-<div id="tab-commissions" class="hidden">
-<div class="panel">
-<h3>الأرباح والعمولات</h3>
-<p class="muted">الأرقام هنا من سجلات author_commissions الفعلية.</p>
-<div id="commissionsTable"></div>
-</div>
-</div>
-
-<div id="tab-withdrawals" class="hidden">
-<div class="panel">
-<h3>طلبات السحب</h3>
-<div id="withdrawalsTable"></div>
-</div>
-</div>
-
-<div id="tab-applications" class="hidden">
-<div class="panel">
-<h3>طلبات الانضمام كمؤلف</h3>
-<div id="applicationsTable"></div>
-</div>
-</div>
-
-<div id="tab-transactions" class="hidden">
-<div class="panel">
-<h3>سجل المعاملات المالية</h3>
-<div id="transactionsTable"></div>
-</div>
-</div>
-
-<div id="tab-settings" class="hidden">
-<div class="panel">
-<h3>إعدادات المنصة</h3>
-<input class="field" id="settingKey" placeholder="مفتاح الإعداد">
-<textarea class="field" id="settingValue" rows="5" placeholder='القيمة بصيغة JSON، مثال: {"name":"NIJI APORIA"}'></textarea>
-<button class="btn primary" onclick="saveSetting()">حفظ الإعداد</button>
-<p id="settingMessage" class="message"></p>
-<div id="settingsTable"></div>
-</div>
-</div>
-
-<div id="tab-logs" class="hidden">
-<div class="panel">
-<h3>سجل نشاط المدير</h3>
-<div id="logsTable"></div>
-</div>
-</div>
-
-</div>
-</div>
-</section>
-
-</main>
-
-<footer>
-<div class="logo">NIJI APORIA</div>
-<p>THE ART OF QUESTIONING</p>
-<p>© <span id="year"></span> NIJI APORIA</p>
-</footer>
-
-<div class="modal" id="authModal">
-<div class="modalbox">
-<button class="btn" onclick="closeAuth()">إغلاق ×</button>
-<h2 id="authTitle">تسجيل الدخول</h2>
-<input class="field" id="authName" placeholder="اسم المستخدم">
-<input class="field" id="authEmail" type="email" placeholder="البريد الإلكتروني">
-<input class="field" id="authPassword" type="password" placeholder="كلمة المرور">
-<button class="btn primary" style="width:100%" onclick="submitAuth()" id="authSubmit">دخول</button>
-<button class="btn" style="width:100%;margin-top:8px" onclick="toggleAuth()" id="authToggle">إنشاء حساب</button>
-<button class="btn" style="width:100%;margin-top:8px" onclick="resetPassword()">استعادة كلمة المرور</button>
-<p id="authMessage" class="message"></p>
-</div>
-</div>
-
-<script>
-const CONFIG=window.NIJI_CONFIG||{};
-let db=null,currentUser=null,isRegister=false,isAdmin=false;
-let books=[],users=[],orders=[],commissions=[],withdrawals=[],applications=[],transactions=[],categories=[];
-
-if(window.supabase&&CONFIG.SUPABASE_URL&&CONFIG.SUPABASE_ANON_KEY){
- db=window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY);
-}
-
-const $=id=>document.getElementById(id);
-const money=n=>Number(n||0).toLocaleString("en-US");
-const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const say=(id,msg)=>{if($(id))$(id).textContent=msg};
-
-$("year").textContent=new Date().getFullYear();
-
-function openAuth(){$("authModal").classList.add("open")}
-function closeAuth(){$("authModal").classList.remove("open")}
-
-function toggleAuth(){
- isRegister=!isRegister;
- $("authTitle").textContent=isRegister?"إنشاء حساب جديد":"تسجيل الدخول";
- $("authName").classList.toggle("hidden",!isRegister);
- $("authSubmit").textContent=isRegister?"إنشاء الحساب":"دخول";
- $("authToggle").textContent=isRegister?"لديك حساب؟ دخول":"إنشاء حساب جديد";
- say("authMessage","");
-}
-
-async function submitAuth(){
- if(!db){say("authMessage","تحقق من ملف config.js");return}
- const email=$("authEmail").value.trim();
- const password=$("authPassword").value;
- const name=$("authName").value.trim();
- if(!email||!password){say("authMessage","أدخل البريد وكلمة المرور");return}
- say("authMessage","يرجى الانتظار...");
- let result;
- if(isRegister){
-  result=await db.auth.signUp({email,password,options:{data:{full_name:name}}});
- }else{
-  result=await db.auth.signInWithPassword({email,password});
- }
- if(result.error){say("authMessage",result.error.message);return}
- if(isRegister){
-  say("authMessage","تم إنشاء الحساب. تحقق من بريدك الإلكتروني إذا طُلب ذلك.");
- }else{
-  closeAuth();
-  await loadSession();
- }
-}
-
-async function resetPassword(){
- if(!db)return;
- const email=$("authEmail").value.trim();
- if(!email){say("authMessage","أدخل البريد الإلكتروني");return}
- const {error}=await db.auth.resetPasswordForEmail(email);
- say("authMessage",error?error.message:"إذا كان البريد مسجلاً فستصلك رسالة الاستعادة.");
-}
-
-async function loadSession(){
- if(!db)return;
- const {data,error}=await db.auth.getSession();
- if(error){console.error(error);return}
- currentUser=data.session?.user||null;
- isAdmin=false;
- updateAccount();
- if(currentUser)await loadProfile();
-}
-
-function updateAccount(){
- $("signedOut").classList.toggle("hidden",!!currentUser);
- $("signedIn").classList.toggle("hidden",!currentUser);
- if(currentUser)$("profileEmail").textContent=currentUser.email||"";
-}
-
-async function loadProfile(){
- const {data,error}=await db.from("profiles")
- .select("id,full_name,role").eq("id",currentUser.id).maybeSingle();
- if(error){say("profileRole","تعذر تحميل الملف الشخصي: "+error.message);return}
- isAdmin=data?.role==="admin";
- $("profileName").textContent=data?.full_name||"عضو NIJI APORIA";
- $("profileRole").textContent=isAdmin?"MASTER ADMIN — MR NIJI":"عضو مسجل";
- $("adminSection").classList.toggle("hidden",!isAdmin);
- if(isAdmin)await loadAdmin();
-}
-
-async function signOut(){
- await db.auth.signOut();
- currentUser=null;isAdmin=false;
- $("adminSection").classList.add("hidden");
- updateAccount();
-}
-
-async function loadBooks(){
- if(!db)return;
- const {data,error}=await db.from("books").select("*")
- .eq("status","published").order("created_at",{ascending:false});
- if(error){say("bookMessage",error.message);return}
- books=data||[];
- renderBooks();
-}
-
-function renderBooks(){
- const q=$("bookSearch").value.toLowerCase();
- const type=$("bookFilter").value;
- const list=books.filter(b=>{
-  const matches=(b.title||"").toLowerCase().includes(q)||
-  (b.description||"").toLowerCase().includes(q);
-  return matches&&(!type||(type==="free"?b.is_free:!b.is_free));
- });
- $("bookList").innerHTML=list.map(b=>`
- <div class="book">
- <div class="cover">NIJI APORIA</div>
- <h3>${safe(b.title)}</h3>
- <p class="muted">${safe(b.description||"")}</p>
- <p class="gold">${b.is_free?"مجاني":money(b.price)+" دج"}</p>
- <button class="btn" onclick="bookAction('${b.id}')">${b.is_free?"قراءة / تحميل":"شراء الكتاب"}</button>
- </div>`).join("");
- if(!list.length)say("bookMessage","لا توجد كتب منشورة حالياً.");
- else say("bookMessage","");
-}
-
-async function bookAction(id){
- if(!currentUser){openAuth();return}
- const b=books.find(x=>x.id===id);
- if(!b)return;
- if(b.is_free){
-  alert("لم يتم تفعيل رابط التحميل الآمن بعد.");
- }else{
-  alert("الشراء غير مفعل حتى ربط بوابة الدفع وتأكيد المعاملة.");
- }
-}
-
-/* MASTER ADMIN */
-
-function showTab(name,button){
- document.querySelectorAll(".tabs-content>div").forEach(el=>el.classList.add("hidden"));
- $("tab-"+name).classList.remove("hidden");
- document.querySelectorAll(".admin-nav button").forEach(b=>b.classList.remove("active"));
- button.classList.add("active");
-}
-
-async function queryTable(table,columns="*"){
- const {data,error}=await db.from(table).select(columns);
- if(error)throw new Error(table+": "+error.message);
- return data||[];
-}
-
-async function loadAdmin(){
- try{
-  say("dashboardMessage","جارٍ تحميل البيانات...");
-  const results=await Promise.all([
-   queryTable("profiles"),
-   queryTable("books"),
-   queryTable("orders"),
-   queryTable("author_commissions"),
-   queryTable("withdrawal_requests"),
-   queryTable("seller_applications"),
-   queryTable("platform_transactions"),
-   queryTable("categories"),
-   queryTable("platform_settings"),
-   queryTable("admin_audit_logs")
-  ]);
-  [users,books,orders,commissions,withdrawals,applications,transactions,categories]=results;
-  renderAdmin();
-  say("dashboardMessage","تم تحميل بيانات المنصة بنجاح.");
- }catch(e){
-  say("dashboardMessage","خطأ في تحميل البيانات: "+e.message);
- }
-}
-
-function renderAdmin(){
- const paid=orders.filter(o=>o.status==="paid");
- $("sUsers").textContent=money(users.length);
- $("sBooks").textContent=money(books.filter(b=>b.status==="published").length);
- $("sOrders").textContent=money(paid.length);
- $("sSales").textContent=money(paid.reduce((s,o)=>s+Number(o.total_amount||0),0));
- $("sProfit").textContent=money(commissions.reduce((s,c)=>s+Number(c.commission_amount||0),0));
- $("sWithdrawals").textContent=money(withdrawals.filter(w=>w.status==="pending").length);
-
- $("recentOrders").innerHTML=tableHTML(
- ["رقم الطلب","المشتري","المبلغ","الحالة"],
- orders.slice(0,8).map(o=>[o.id,o.buyer_id,money(o.total_amount)+" دج",o.status])
- );
- renderUsers();
- renderAdminBooks();
- renderOrders();
- renderCommissions();
- renderWithdrawals();
- renderApplications();
- renderTransactions();
- renderSettings();
- renderLogs();
- renderCategories();
-}
-
-function tableHTML(headers,rows,actions=[]){
- if(!rows.length)return '<p class="muted">لا توجد بيانات حالياً.</p>';
- return '<div class="table-wrap"><table><thead><tr>'+
- headers.map(h=>`<th>${safe(h)}</th>`).join("")+
- (actions.length?'<th>الإجراءات</th>':'')+
- '</tr></thead><tbody>'+
- rows.map((row,i)=>'<tr>'+row.map(v=>`<td>${safe(v)}</td>`).join("")+
- (actions[i]?`<td>${actions[i]}</td>`:"")+
- '</tr>').join("")+
- '</tbody></table></div>';
-}
-
-function renderUsers(){
- const q=($("userSearch")?.value||"").toLowerCase();
- const rows=users.filter(u=>
- (u.full_name||"").toLowerCase().includes(q)||
- (u.id||"").toLowerCase().includes(q)
- ).map(u=>[u.full_name||"بدون اسم",u.id,u.role||"user",u.created_at?.slice(0,10)||""]);
- $("usersTable").innerHTML=tableHTML(["الاسم","معرف الحساب","الصلاحية","تاريخ التسجيل"],rows);
-}
-
-function renderAdminBooks(){
- const rows=books.map(b=>[
- b.title,b.seller_id,b.is_free?"مجاني":money(b.price)+" دج",b.status
- ]);
- const actions=books.map(b=>`
- <button class="action" onclick="changeBookStatus('${b.id}','published')">نشر</button>
- <button clas
+        // معالجة نموذج تسجيل الدخول (يمكنك ربطه بـ Supabase لاحقاً)
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            console.warn("جاري محاولة تسجيل الدخول بـ:", email);
+            alert("تم إرسال بيانات الدخول بنجاح (قم بربطها بـ Supabase هنا)");
+            
+            // مثال على ربط Supabase (تأكد من تعريف supabase في config.js):
+            // 
+            // supabase.auth.signInWithPassword({ email, password }).then(({ data, error }) => {
+            //     if (error) alert(error.message);
+            //     else { alert('تم تسجيل الدخول بنجاح!'); location.reload(); }
+            // });
+        });
+    </script>
+</body>
+</html>
