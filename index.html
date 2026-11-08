@@ -1,70 +1,391 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090909">
+<meta name="description" content="NIJI APORIA — موسوعة مستقلة للفلسفة والمعرفة الإنسانية.">
+<title>NIJI APORIA — The Art of Questioning</title>
 
--- ==========================================
--- NIJI APORIA | DATABASE AUDIT
--- READ ONLY - NO DATA WILL BE DELETED
--- ==========================================
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 
--- 1. Existing public tables
-select
-  table_name
-from information_schema.tables
-where table_schema = 'public'
-  and table_type = 'BASE TABLE'
-order by table_name;
+<style>
+:root{
+ --bg:#090909;--panel:#111;--panel2:#171717;--gold:#c6a45c;
+ --gold2:#ead6a0;--text:#e8e4da;--muted:#99938a;
+ --line:rgba(198,164,92,.22);--red:#8c2929;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;line-height:1.9}
+a{color:inherit;text-decoration:none}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.container{width:min(1160px,92%);margin:auto}
+header{position:sticky;top:0;z-index:20;background:rgba(9,9,9,.94);backdrop-filter:blur(15px);border-bottom:1px solid var(--line)}
+.nav{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{font-family:'Cormorant Garamond',serif;font-size:27px;letter-spacing:3px;color:var(--gold);font-weight:700;direction:ltr}
+nav{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+nav a{font-size:13px;color:#c9c3b7}
+nav a:hover,.gold{color:var(--gold)}
+.btn{border:1px solid var(--gold);background:transparent;color:var(--gold);padding:9px 18px;border-radius:3px;font-size:13px}
+.btn:hover,.btn.primary{background:var(--gold);color:#090909}
+.menu{display:none}
+.hero{min-height:570px;display:flex;align-items:center;text-align:center;position:relative;overflow:hidden;border-bottom:1px solid var(--line);background:radial-gradient(ellipse at 50% 40%,#282116 0%,#111 38%,#090909 75%)}
+.hero:before,.hero:after{content:"";position:absolute;width:380px;height:380px;border:1px solid rgba(198,164,92,.12);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
+.hero:after{width:510px;height:510px}
+.hero-content{position:relative;z-index:1;width:100%;padding:80px 0}
+.eyebrow{color:var(--gold);letter-spacing:4px;font-size:12px;direction:ltr}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(45px,9vw,88px);color:var(--gold2);letter-spacing:5px;line-height:1.2;direction:ltr;margin:20px 0}
+.hero h2{font-size:20px;font-weight:500;margin-bottom:15px}
+.hero p{max-width:650px;margin:0 auto 28px;color:#b7b0a4;font-size:15px}
+.section{padding:75px 0}
+.section-head{text-align:center;margin-bottom:35px}
+.section-head small{color:var(--gold);letter-spacing:3px;direction:ltr;display:block}
+.section-head h2{font-size:27px;font-weight:600;margin-top:8px}
+.section-head p{color:var(--muted);font-size:13px;margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
+.card{background:linear-gradient(145deg,#171717,#101010);border:1px solid var(--line);padding:24px;border-radius:4px;transition:.25s}
+.card:hover{border-color:var(--gold);transform:translateY(-3px)}
+.card .number{font-family:'Cormorant Garamond';font-size:30px;color:var(--gold)}
+.card h3{font-size:18px;margin:8px 0}
+.card p{font-size:13px;color:var(--muted)}
+.card a{display:inline-block;color:var(--gold);font-size:12px;margin-top:14px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.field{background:#151515;border:1px solid #38332a;color:var(--text);padding:12px 14px;border-radius:3px;min-width:0}
+.toolbar input{flex:1;min-width:180px}
+.books{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.book{background:#121212;border:1px solid var(--line);padding:20px}
+.book-cover{height:150px;background:linear-gradient(145deg,#282116,#090909);display:grid;place-items:center;color:var(--gold);font-family:'Cormorant Garamond';font-size:25px;direction:ltr;border:1px solid #3a3020;margin-bottom:15px}
+.book h3{font-size:16px}
+.book p{font-size:12px;color:var(--muted);margin:6px 0}
+.price{color:var(--gold);font-weight:700}
+.tag{font-size:11px;border:1px solid var(--line);padding:2px 8px;color:var(--gold);display:inline-block;margin-top:8px}
+.panel{background:#111;border:1px solid var(--line);padding:25px;margin-top:20px}
+.panel h3{color:var(--gold);margin-bottom:12px}
+.panel input,.panel textarea,.panel select{width:100%;margin:7px 0}
+.hidden{display:none!important}
+.quote{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold2);text-align:center;max-width:780px;margin:auto;direction:rtl}
+.quote small{display:block;font-family:'Cairo';font-size:12px;color:var(--muted);margin-top:15px}
+footer{border-top:1px solid var(--line);padding:45px 0;text-align:center;color:var(--muted);font-size:12px}
+footer .logo{margin-bottom:12px}
+.modal{position:fixed;inset:0;background:#000d;z-index:50;display:none;place-items:center;padding:15px}
+.modal.open{display:grid}
+.modal-box{width:min(430px,100%);background:#141414;border:1px solid var(--gold);padding:25px;max-height:90vh;overflow:auto}
+.modal-box h2{color:var(--gold);margin-bottom:15px}
+.modal-box input{width:100%;margin:7px 0}
+.notice{font-size:12px;color:var(--muted);margin-top:10px;white-space:pre-wrap}
+.status{font-size:13px;color:var(--gold);margin:12px 0}
+hr{border:0;border-top:1px solid var(--line);margin:20px 0}
+@media(max-width:800px){
+ nav{display:none;position:absolute;top:76px;right:0;left:0;background:#101010;padding:20px;flex-direction:column;border-bottom:1px solid var(--line)}
+ nav.show{display:flex}
+ .menu{display:block}
+ .grid,.books{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:520px){
+ .grid,.books{grid-template-columns:1fr}
+ .hero{min-height:500px}
+ .section{padding:55px 0}
+ .hero h1{letter-spacing:2px}
+}
+</style>
+</head>
 
--- 2. Existing users (counts only)
-select
-  count(*) as total_auth_users
-from auth.users;
+<body>
+<header>
+ <div class="container nav">
+  <a class="logo" href="#">NIJI APORIA</a>
+  <button class="btn menu" onclick="document.querySelector('nav').classList.toggle('show')">☰</button>
+  <nav>
+   <a href="#home">الرئيسية</a>
+   <a href="#domains">المعرفة</a>
+   <a href="#library">المكتبة</a>
+   <a href="#archive">الأرشيف</a>
+   <a href="#about">عن المشروع</a>
+   <a href="#account">حسابي</a>
+  </nav>
+  <button class="btn" onclick="openAuth()">الدخول / التسجيل</button>
+ </div>
+</header>
 
-select
-  count(*) as total_profiles
-from public.profiles;
+<main>
+<section class="hero" id="home">
+ <div class="container hero-content">
+  <div class="eyebrow">AN INDEPENDENT KNOWLEDGE UNIVERSE</div>
+  <h1>NIJI APORIA</h1>
+  <h2>فنّ التساؤل... وما وراء حدود المعرفة</h2>
+  <p>مساحة مستقلة لاستكشاف الفلسفة والعلوم والتاريخ والإنسان. هنا لا نبحث عن إجابات جاهزة فحسب، بل نعيد النظر في الأسئلة التي تصنع وعينا بالعالم.</p>
+  <a class="btn primary" href="#domains">اكتشف عوالم المعرفة</a>
+  <a class="btn" href="#library">استكشف المكتبة</a>
+ </div>
+</section>
 
--- 3. Existing user roles
-select
-  role,
-  count(*) as total
-from public.user_roles
-group by role
-order by role;
+<section class="section" id="domains">
+ <div class="container">
+  <div class="section-head">
+   <small>THE DOMAINS OF KNOWLEDGE</small>
+   <h2>أبواب المعرفة</h2>
+   <p>ستة مسارات كبرى لفهم الإنسان والعالم والوجود.</p>
+  </div>
+  <div class="grid">
+   <article class="card"><div class="number">01</div><h3>الفلسفة</h3><p>الميتافيزيقا، الأخلاق، المنطق، فلسفة العقل، ونظرية المعرفة.</p><a href="#archive" onclick="setCategory('الفلسفة')">استكشف القسم ←</a></article>
+   <article class="card"><div class="number">02</div><h3>الوجود والوعي</h3><p>الوجود، الذات، الحرية، الموت، الوعي، ومعنى الحياة.</p><a href="#archive" onclick="setCategory('الوجود والوعي')">استكشف القسم ←</a></article>
+   <article class="card"><div class="number">03</div><h3>العلوم والمعرفة</h3><p>الفيزياء، الرياضيات، الأحياء، الفلك، ومنهجية العلم.</p><a href="#archive" onclick="setCategory('العلوم')">استكشف القسم ←</a></article>
+   <article class="card"><div class="number">04</div><h3>علم النفس</h3><p>العقل والسلوك، الإدراك، الشخصية، الذاكرة، والتحليل النفسي.</p><a href="#archive" onclick="setCategory('علم النفس')">استكشف القسم ←</a></article>
+   <article class="card"><div class="number">05</div><h3>التاريخ والحضارات</h3><p>تاريخ الأفكار، الحضارات، التحولات الاجتماعية، وسير المفكرين.</p><a href="#archive" onclick="setCategory('التاريخ')">استكشف القسم ←</a></article>
+   <article class="card"><div class="number">06</div><h3>الأدب والإنسان</h3><p>الأدب، اللغة، الفنون، الاجتماع، والثقافة الإنسانية.</p><a href="#archive" onclick="setCategory('الأدب')">استكشف القسم ←</a></article>
+  </div>
+ </div>
+</section>
 
--- 4. Check admin account without exposing email
-select
-  exists (
-    select 1
-    from public.user_roles
-    where role = 'admin'
-  ) as admin_exists;
+<section class="section" id="archive">
+ <div class="container">
+  <div class="section-head">
+   <small>THE KNOWLEDGE ARCHIVE</small>
+   <h2>أرشيف المعرفة</h2>
+   <p>ابحث في المقالات والموضوعات المنشورة.</p>
+  </div>
+  <div class="toolbar">
+   <input id="searchInput" class="field" placeholder="ابحث عن فكرة أو موضوع..." oninput="filterArticles()">
+   <select id="categoryFilter" class="field" onchange="filterArticles()">
+    <option value="">جميع الأقسام</option>
+    <option>الفلسفة</option><option>الوجود والوعي</option><option>العلوم</option>
+    <option>علم النفس</option><option>التاريخ</option><option>الأدب</option>
+   </select>
+  </div>
+  <div class="grid" id="articleList">
+   <article class="card article" data-category="الفلسفة"><div class="number">01</div><h3>ما الفلسفة؟</h3><p>مدخل إلى التفكير الفلسفي وطبيعة السؤال.</p><span class="tag">الفلسفة</span></article>
+   <article class="card article" data-category="الوجود والوعي"><div class="number">02</div><h3>مشكلة الوعي</h3><p>هل الوعي مجرد نشاط دماغي أم أن المسألة أعمق؟</p><span class="tag">الوجود والوعي</span></article>
+   <article class="card article" data-category="العلوم"><div class="number">03</div><h3>حدود المعرفة العلمية</h3><p>ما الذي تستطيع العلوم معرفته، وما الذي يبقى خارجها؟</p><span class="tag">العلوم</span></article>
+  </div>
+  <p id="articleEmpty" class="notice hidden">لا توجد نتائج مطابقة حالياً.</p>
+ </div>
+</section>
 
--- 5. Row Level Security status
-select
-  tablename,
-  rowsecurity
-from pg_tables
-where schemaname = 'public'
-order by tablename;
+<section class="section" id="library">
+ <div class="container">
+  <div class="section-head">
+   <small>THE DIGITAL LIBRARY</small>
+   <h2>المكتبة الرقمية</h2>
+   <p>كتب ودراسات ومؤلفات مجانية ومدفوعة من المنصة والمساهمين.</p>
+  </div>
+  <div class="toolbar">
+   <input id="bookSearch" class="field" placeholder="ابحث عن كتاب أو مؤلف..." oninput="filterBooks()">
+   <select id="bookFilter" class="field" onchange="filterBooks()">
+    <option value="">كل الكتب</option><option value="free">مجاني</option><option value="paid">مدفوع</option>
+   </select>
+  </div>
+  <div class="books" id="bookList">
+   <div class="book"><div class="book-cover">NIJI APORIA</div><h3>مكتبة المعرفة</h3><p>ستظهر الكتب المنشورة هنا بعد ربط قاعدة البيانات.</p><span class="tag">قريباً</span></div>
+  </div>
+  <p id="bookEmpty" class="notice hidden">لم يتم العثور على كتب مطابقة.</p>
+ </div>
+</section>
 
--- 6. Existing storage buckets
-select
-  id,
-  name,
-  public
-from storage.buckets
-order by name;
+<section class="section">
+ <div class="container">
+  <div class="section-head"><small>THOUGHT & REFLECTION</small><h2>مساحة للتأمل</h2></div>
+  <div class="panel">
+   <p class="quote">«إن السؤال الذي لا يهدأ، قد يكون أصدق من إجابة لا تقبل الشك.»<small>NIJI APORIA — مساحة للتفكير</small></p>
+  </div>
+ </div>
+</section>
 
--- 7. Existing custom functions
-select
-  routine_name
-from information_schema.routines
-where routine_schema = 'public'
-order by routine_name;
+<section class="section" id="account">
+ <div class="container">
+  <div class="section-head"><small>YOUR PERSONAL SPACE</small><h2>مساحتك الخاصة</h2><p>سجّل الدخول لإدارة ملفك ومفضلاتك ومساهماتك.</p></div>
+  <div class="panel">
+   <div id="signedOut">
+    <h3>مرحباً بك في NIJI APORIA</h3>
+    <p>سجّل الدخول أو أنشئ حساباً للانضمام إلى مجتمع المعرفة.</p>
+    <button class="btn primary" onclick="openAuth()">الدخول أو التسجيل</button>
+   </div>
+   <div id="signedIn" class="hidden">
+    <h3 id="profileName">حسابك</h3>
+    <p id="profileEmail"></p>
+    <p id="profileRole" class="status"></p>
+    <button class="btn" onclick="signOut()">تسجيل الخروج</button>
+   </div>
+  </div>
+ </div>
+</section>
 
--- 8. Existing triggers on user registration
-select
-  trigger_name,
-  event_object_table
-from information_schema.triggers
-where event_object_schema = 'auth'
-  and event_object_table = 'users';
-  
+<section class="section hidden" id="adminSection">
+ <div class="container">
+  <div class="section-head"><small>ADMINISTRATION</small><h2>لوحة إدارة MR NIJI</h2><p>إدارة المحتوى وإضافة الكتب إلى المكتبة.</p></div>
+  <div class="panel">
+   <h3>إضافة كتاب جديد</h3>
+   <input class="field" id="newBookTitle" placeholder="عنوان الكتاب">
+   <input class="field" id="newBookAuthor" placeholder="اسم المؤلف">
+   <select class="field" id="newBookCategory">
+    <option>الفلسفة</option><option>العلوم</option><option>التاريخ</option><option>الأدب</option><option>علم النفس</option>
+   </select>
+   <select class="field" id="newBookType"><option value="free">مجاني</option><option value="paid">مدفوع</option></select>
+   <input class="field" id="newBookPrice" type="number" min="0" placeholder="السعر">
+   <input class="field" id="newBookFile" placeholder="مسار الملف في التخزين (لاحقاً)">
+   <button class="btn primary" onclick="addBook()">إضافة الكتاب</button>
+   <p id="adminMessage" class="notice"></p>
+  </div>
+ </div>
+</section>
+
+<section class="section" id="about">
+ <div class="container">
+  <div class="section-head"><small>ABOUT THE PROJECT</small><h2>عن NIJI APORIA</h2></div>
+  <div class="panel">
+   <p>NIJI APORIA مشروع معرفي مستقل، يسعى إلى جمع فروع المعرفة الإنسانية في فضاء واحد: موسوعة للأفكار، مجلة للمقالات، مكتبة للكتب، وأكاديمية لمسارات التعلم.</p>
+   <hr>
+   <p>لسنا هنا لتقديم أجوبة نهائية، بل لفتح مساحات أوسع للفهم والنقد والتساؤل.</p>
+   <p class="gold" style="margin-top:15px">THE ART OF QUESTIONING.</p>
+  </div>
+ </div>
+</section>
+</main>
+
+<footer>
+ <div class="container">
+  <div class="logo">NIJI APORIA</div>
+  <p>Independent Knowledge • Philosophy • Humanity</p>
+  <p>© <span id="year"></span> NIJI APORIA. جميع الحقوق محفوظة.</p>
+  <p>سياسة الخصوصية · شروط الاستخدام · التواصل</p>
+ </div>
+</footer>
+
+<div class="modal" id="authModal">
+ <div class="modal-box">
+  <button class="btn" style="float:left" onclick="closeAuth()">إغلاق ×</button>
+  <h2 id="authTitle">تسجيل الدخول</h2>
+  <input class="field" id="authName" placeholder="اسم المستخدم" style="display:none">
+  <input class="field" id="authEmail" type="email" placeholder="البريد الإلكتروني">
+  <input class="field" id="authPassword" type="password" placeholder="كلمة المرور">
+  <button class="btn primary" style="width:100%;margin-top:12px" onclick="submitAuth()" id="authSubmit">دخول</button>
+  <button class="btn" style="width:100%;margin-top:8px" onclick="toggleAuth()" id="authToggle">إنشاء حساب جديد</button>
+  <button class="btn" style="width:100%;margin-top:8px" onclick="resetPassword()">نسيت كلمة المرور؟</button>
+  <p id="authMessage" class="notice"></p>
+ </div>
+</div>
+
+<script>
+const CONFIG = window.NIJI_CONFIG || {};
+let db = null;
+let currentUser = null;
+let isRegister = false;
+let books = [];
+
+if (window.supabase && CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    !CONFIG.SUPABASE_URL.includes("ضع_") &&
+    !CONFIG.SUPABASE_ANON_KEY.includes("ضع_")) {
+  db = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+}
+
+document.getElementById("year").textContent = new Date().getFullYear();
+
+function openAuth(){document.getElementById("authModal").classList.add("open")}
+function closeAuth(){document.getElementById("authModal").classList.remove("open")}
+function toggleAuth(){
+ isRegister=!isRegister;
+ document.getElementById("authTitle").textContent=isRegister?"إنشاء حساب جديد":"تسجيل الدخول";
+ document.getElementById("authName").style.display=isRegister?"block":"none";
+ document.getElementById("authSubmit").textContent=isRegister?"إنشاء الحساب":"دخول";
+ document.getElementById("authToggle").textContent=isRegister?"لديك حساب؟ تسجيل الدخول":"إنشاء حساب جديد";
+ document.getElementById("authMessage").textContent="";
+}
+function message(id,text){document.getElementById(id).textContent=text}
+
+async function submitAuth(){
+ if(!db){message("authMessage","لم يتم ربط Supabase بعد. تحقق من ملف config.js.");return}
+ const email=document.getElementById("authEmail").value.trim();
+ const password=document.getElementById("authPassword").value;
+ const name=document.getElementById("authName").value.trim();
+ if(!email||!password){message("authMessage","أدخل البريد الإلكتروني وكلمة المرور.");return}
+ message("authMessage","يرجى الانتظار...");
+ let result;
+ if(isRegister){
+  result=await db.auth.signUp({email,password,options:{data:{full_name:name}}});
+  if(!result.error) message("authMessage","تم إنشاء الحساب. تحقق من بريدك الإلكتروني إذا طُلب منك ذلك.");
+ }else{
+  result=await db.auth.signInWithPassword({email,password});
+ }
+ if(result.error){message("authMessage",result.error.message);return}
+ if(!isRegister){closeAuth();await loadSession()}
+}
+
+async function resetPassword(){
+ if(!db){message("authMessage","اربط Supabase أولاً.");return}
+ const email=document.getElementById("authEmail").value.trim();
+ if(!email){message("authMessage","أدخل بريدك الإلكتروني أولاً.");return}
+ const {error}=await db.auth.resetPasswordForEmail(email);
+ message("authMessage",error?error.message:"إذا كان البريد مسجلاً فستصلك رسالة استعادة كلمة المرور.");
+}
+
+async function loadSession(){
+ if(!db)return;
+ const {data}=await db.auth.getSession();
+ currentUser=data.session?.user||null;
+ updateAccount();
+ if(currentUser) await loadProfile();
+}
+function updateAccount(){
+ document.getElementById("signedOut").classList.toggle("hidden",!!currentUser);
+ document.getElementById("signedIn").classList.toggle("hidden",!currentUser);
+ if(currentUser)document.getElementById("profileEmail").textContent=currentUser.email||"";
+}
+async function loadProfile(){
+ if(!db||!currentUser)return;
+ const {data,error}=await db.from("profiles").select("*").eq("id",currentUser.id).maybeSingle();
+ if(error){message("profileRole","تعذر تحميل الملف الشخصي: "+error.message);return}
+ document.getElementById("profileName").textContent=data?.full_name||currentUser.user_metadata?.full_name||"عضو NIJI APORIA";
+ const admin=data?.role==="admin";
+ document.getElementById("profileRole").textContent=admin?"مدير المنصة — MR NIJI":"عضو مسجل";
+ document.getElementById("adminSection").classList.toggle("hidden",!admin);
+}
+async function signOut(){
+ if(db)await db.auth.signOut();
+ currentUser=null;
+ document.getElementById("adminSection").classList.add("hidden");
+ updateAccount();
+}
+async function loadBooks(){
+ if(!db)return;
+ const {data,error}=await db.from("books").select("*").eq("status","published").order("created_at",{ascending:false});
+ if(error){console.error(error);return}
+ books=data||[];
+ renderBooks(books);
+}
+function renderBooks(items){
+ const list=document.getElementById("bookList");
+ list.innerHTML="";
+ if(!items.length){document.getElementById("bookEmpty").classList.remove("hidden");return}
+ document.getElementById("bookEmpty").classList.add("hidden");
+ items.forEach(book=>{
+  const div=document.createElement("div");
+  div.className="book";
+  const cover=document.createElement("div");cover.className="book-cover";cover.textContent="NIJI APORIA";
+  const title=document.createElement("h3");title.textContent=book.title||"كتاب";
+  const author=document.createElement("p");author.textContent="المؤلف: "+(book.author||"غير محدد");
+  const category=document.createElement("p");category.textContent=book.category||"";
+  const price=document.createElement("div");price.className="price";
+  price.textContent=book.is_free?"مجاني":(book.price!=null?book.price+" دج":"مدفوع");
+  const btn=document.createElement("button");btn.className="btn";btn.style.marginTop="12px";
+  btn.textContent=book.is_free?"طلب القراءة / التحميل":"شراء الكتاب";
+  btn.onclick=()=>bookAction(book);
+  div.append(cover,title,author,category,price,btn);list.append(div);
+ });
+}
+async function bookAction(book){
+ if(!currentUser){openAuth();return}
+ if(book.is_free){
+  alert("سيتم تفعيل رابط التحميل الآمن بعد إعداد التخزين والصلاحيات.");
+ }else{
+  alert("سيتم تفعيل الشراء والدفع بعد ربط نظام الدفع وتأكيد الطلب.");
+ }
+}
+function filterBooks(){
+ const q=document.getElementById("bookSearch").value.toLowerCase();
+ const type=document.getElementById("bookFilter").value;
+ const filtered=books.filter(b=>{
+  const matches=(b.title||"").toLowerCase().includes(q)||(b
