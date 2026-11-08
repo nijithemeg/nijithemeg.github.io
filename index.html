@@ -387,5 +387,45 @@ async function bookAction(book){
 function filterBooks(){
  const q=document.getElementById("bookSearch").value.toLowerCase();
  const type=document.getElementById("bookFilter").value;
+
  const filtered=books.filter(b=>{
-  const matches=(b.title||"").toLowerCase().includes(q)||(b
+  const matches=(b.title||"").toLowerCase().includes(q)||
+                (b.author||"").toLowerCase().includes(q);
+  const free=b.is_free===true;
+  return matches&&(!type||(type==="free"?free:!free));
+ });
+
+ renderBooks(filtered);
+}
+
+function filterArticles(){
+ const q=document.getElementById("searchInput").value.toLowerCase();
+ const cat=document.getElementById("categoryFilter").value;
+ let count=0;
+
+ document.querySelectorAll(".article").forEach(el=>{
+  const ok=el.innerText.toLowerCase().includes(q)&&
+           (!cat||el.dataset.category===cat);
+  el.classList.toggle("hidden",!ok);
+  if(ok)count++;
+ });
+
+ document.getElementById("articleEmpty").classList.toggle("hidden",count>0);
+}
+
+function setCategory(category){
+ document.getElementById("categoryFilter").value=category;
+ filterArticles();
+}
+
+if(db){
+ loadSession();
+ loadBooks();
+ db.auth.onAuthStateChange(()=>loadSession());
+}else{
+ console.warn("Supabase is not configured. Check config.js.");
+}
+
+</script>
+</body>
+</html>
