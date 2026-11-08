@@ -3,129 +3,368 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NIJI-APORIA | المنصة المعرفية والفلسفية</title>
+  <title>NIJI-APORIA | المنصة المعرفية والفلسفية والحرفية</title>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --bg-dark: #08080a;
       --bg-card: #121216;
+      --bg-hover: #1a1a22;
       --gold-primary: #c5a059;
       --gold-light: #e6ca65;
       --text-main: #e2e8f0;
       --text-muted: #94a3b8;
-      --border-color: rgba(197, 160, 89, 0.2);
+      --border-color: rgba(197, 160, 89, 0.25);
+      --success-green: #22c55e;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
     body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; }
-    
-    header { border-bottom: 1px solid var(--border-color); background: rgba(8,8,10,0.95); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
-    .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+
+    /* الهيدر وقائمة التنقل */
+    header { border-bottom: 1px solid var(--border-color); background: rgba(8,8,10,0.95); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+    .nav-container { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
     .logo { font-family: 'Amiri', serif; font-size: 1.8rem; font-weight: 700; color: var(--gold-primary); text-decoration: none; letter-spacing: 1px; }
-    .nav-links { display: flex; gap: 20px; list-style: none; }
+    .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
     .nav-links a { color: var(--text-main); text-decoration: none; font-size: 0.95rem; transition: 0.3s; }
     .nav-links a:hover { color: var(--gold-primary); }
+    .btn-gold { background: var(--gold-primary); color: #000; padding: 8px 18px; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; text-decoration: none; display: inline-block; transition: 0.3s; }
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
+    
+    /* قسم الواجهة الرئيسية */
+    .hero { text-align: center; padding: 80px 20px; border-bottom: 1px solid var(--border-color); background: radial-gradient(circle at center, rgba(197,160,89,0.08) 0%, transparent 70%); }
+    .hero h1 { font-family: 'Amiri', serif; font-size: 3.2rem; color: var(--gold-primary); margin-bottom: 15px; }
+    .hero p { color: var(--text-muted); max-width: 700px; margin: 0 auto 30px; font-size: 1.1rem; }
+    .search-box { max-width: 500px; margin: 0 auto; display: flex; gap: 10px; }
+    .search-box input { flex: 1; padding: 12px 18px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-card); color: #fff; outline: none; }
 
-    .hero { text-align: center; padding: 80px 20px; border-bottom: 1px solid var(--border-color); background: radial-gradient(circle at center, rgba(197,160,89,0.05) 0%, transparent 70%); }
-    .hero h1 { font-family: 'Amiri', serif; font-size: 3rem; color: var(--gold-primary); margin-bottom: 15px; }
-    .hero p { color: var(--text-muted); max-width: 600px; margin: 0 auto 30px; }
+    /* الحاويات والأقسام */
+    .container { max-width: 1280px; margin: 50px auto; padding: 0 20px; }
+    .section-title { font-family: 'Amiri', serif; font-size: 2.2rem; color: var(--gold-primary); margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .category-tabs { display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; }
+    .tab-btn { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: 0.3s; }
+    .tab-btn.active, .tab-btn:hover { background: var(--gold-primary); color: #000; font-weight: bold; }
 
-    .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-    .section-title { font-family: 'Amiri', serif; font-size: 2rem; color: var(--gold-primary); margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
-    .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; transition: 0.3s; display: flex; flex-direction: column; }
-    .card:hover { transform: translateY(-5px); border-color: var(--gold-primary); }
-    .card-img { height: 300px; background-size: cover; background-position: center; }
+    /* شبكة الكتب والبطاقات */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 30px; }
+    .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; transition: 0.3s; display: flex; flex-direction: column; position: relative; }
+    .card:hover { transform: translateY(-6px); border-color: var(--gold-primary); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .badge { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.8); color: var(--gold-light); border: 1px solid var(--gold-primary); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+    .card-img { height: 320px; background-size: cover; background-position: center; background-color: #1a1a20; }
     .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
-    .card-title { font-size: 1.2rem; margin-bottom: 8px; color: #fff; }
+    .card-title { font-size: 1.25rem; margin-bottom: 8px; color: #fff; font-family: 'Amiri', serif; }
     .card-author { color: var(--gold-primary); font-size: 0.9rem; margin-bottom: 12px; }
-    .card-price { margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
-    .price-tag { font-weight: bold; color: var(--gold-light); }
-    .btn { background: var(--gold-primary); color: #000; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; display: inline-block; text-align: center; }
-    .btn:hover { background: var(--gold-light); }
+    .card-desc { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .card-footer { margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; }
+    .price-tag { font-weight: bold; color: var(--gold-light); font-size: 1.1rem; }
 
-    .dhikr-section { background: var(--bg-card); border: 1px solid var(--border-color); padding: 30px; border-radius: 8px; text-align: center; margin: 40px 0; }
-    .dhikr-count { font-size: 2.5rem; color: var(--gold-primary); font-family: 'Amiri', serif; margin: 15px 0; }
+    /* النوافذ المنبثقة (Modals) */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+    .modal-content { background: var(--bg-card); border: 1px solid var(--gold-primary); padding: 30px; border-radius: 8px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative; }
+    .close-modal { position: absolute; top: 15px; left: 20px; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; color: var(--gold-primary); font-size: 0.9rem; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); background: #0b0b0e; color: #fff; border-radius: 4px; outline: none; }
 
-    footer { background: #040405; border-top: 1px solid var(--border-color); padding: 40px 20px; text-align: center; color: var(--text-muted); margin-top: 60px; }
+    /* الأذكار والاستغفار */
+    .dhikr-section { background: var(--bg-card); border: 1px solid var(--border-color); padding: 40px 20px; border-radius: 8px; text-align: center; margin: 60px 0; }
+    .dhikr-count { font-size: 3rem; color: var(--gold-primary); font-family: 'Amiri', serif; margin: 20px 0; }
+
+    /* التذييل */
+    footer { background: #040405; border-top: 1px solid var(--border-color); padding: 40px 20px; text-align: center; color: var(--text-muted); margin-top: 80px; }
     footer a { color: var(--gold-primary); text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .nav-container { flex-direction: column; gap: 15px; }
+      .hero h1 { font-size: 2.2rem; }
+    }
   </style>
 </head>
 <body>
 
+  <!-- القائمة علوية -->
   <header>
     <div class="nav-container">
       <a href="#" class="logo">NIJI-APORIA</a>
       <ul class="nav-links">
-        <li><a href="#main-library">المكتبة الفلسفية</a></li>
+        <li><a href="#philosophy">الفلسفة والوجود</a></li>
+        <li><a href="#religious">الكتب الدينية</a></li>
+        <li><a href="#educational">الكتب والكورسات التعليمية</a></li>
         <li><a href="#craftsman">مكتبة الحرفيين</a></li>
         <li><a href="#dhikr">مساحة الأذكار</a></li>
-        <li><a href="#contact">التواصل</a></li>
+        <li id="admin-link-holder"></li>
+        <li id="auth-btn-holder"><button class="btn-gold" onclick="openModal('auth-modal')">دخول / تسجيل</button></li>
       </ul>
     </div>
   </header>
 
+  <!-- القسم الرئيسي -->
   <section class="hero">
     <h1>NIJI-APORIA</h1>
-    <p>منصة فلسفية وجودية ومعرفية شاملة — نصوص، مؤلفات، ودلائل حرفية مخصصة.</p>
+    <p>موسوعة فلسفية معرفية، مكتبة إسلامية وتدريبية، ومنصة متخصصة لدلائل وكورسات الحرفيين والتقنيين.</p>
+    <div class="search-box">
+      <input type="text" id="global-search" placeholder="ابحث عن كتاب، كورس، أو دليل تقني..." oninput="filterBooks()">
+      <button class="btn-gold">بحث</button>
+    </div>
   </section>
 
-  <div class="container" id="main-library">
+  <!-- الأقسام البرمجية -->
+  <div class="container" id="philosophy">
     <div class="section-title">
-      <span>المكتبة والمعرض الفكري</span>
+      <span>الأقسام والمعارف</span>
     </div>
+
+    <!-- مرشحات التصنيف -->
+    <div class="category-tabs">
+      <button class="tab-btn active" onclick="selectCategory('الكل')">كافة الأقسام</button>
+      <button class="tab-btn" onclick="selectCategory('فلسفة')">الفلسفة والوجود</button>
+      <button class="tab-btn" onclick="selectCategory('ديني')">الكتب الدينية</button>
+      <button class="tab-btn" onclick="selectCategory('تعليمي')">الكتب والكورسات التعليمية</button>
+      <button class="tab-btn" onclick="selectCategory('حرفيين')">مكتبة الحرفيين والتقنيين</button>
+    </div>
+
     <div class="grid" id="books-grid">
-      <!-- يتم تحميل الكتب تلقائياً من Supabase -->
+      <!-- يتم تحميل البطاقات ديناميكياً -->
     </div>
   </div>
 
-  <div class="container" id="craftsman">
-    <div class="section-title">
-      <span>مكتبة الحرفيين والتقنيين</span>
-    </div>
-    <div class="grid">
-      <div class="card">
-        <div class="card-body">
-          <h3 class="card-title">التبريد والتكييف المنزلية</h3>
-          <p style="color:var(--text-muted); font-size:0.9rem;">أدلة تشخيص الأعطال والدوائر الكهربائية للثلاجات والمكيفات.</p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-body">
-          <h3 class="card-title">آلات الغسيل والمدافئ</h3>
-          <p style="color:var(--text-muted); font-size:0.9rem;">أكواد الأخطاء وإصلاح أنظمة التسخين والغسيل الذكي.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <!-- مساحة الأذكار الاستغفار -->
   <div class="container" id="dhikr">
     <div class="dhikr-section">
       <h2 style="font-family:'Amiri', serif; color:var(--gold-primary);">مساحة الذكر والاستغفار (صدقة جارية)</h2>
       <div class="dhikr-count" id="counter-val">0</div>
-      <button class="btn" onclick="incrementDhikr()">أستغفر الله العظيم وأتوب إليه</button>
+      <button class="btn-gold" onclick="incrementDhikr()">أستغفر الله العظيم وأتوب إليه</button>
     </div>
   </div>
 
+  <!-- نافذة تسجيل الدخول / إنشاء حساب -->
+  <div class="modal" id="auth-modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('auth-modal')">&times;</span>
+      <h2 style="color:var(--gold-primary); margin-bottom:20px; font-family:'Amiri', serif;">تسجيل الدخول / الحساب الشخصي</h2>
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="auth-email" placeholder="email@example.com">
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="auth-password" placeholder="******">
+      </div>
+      <div class="form-group">
+        <label>رابط Google Drive الشخصي (لحفظ كتبك وملفاتك)</label>
+        <input type="url" id="auth-drive" placeholder="https://drive.google.com/drive/folders/...">
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-gold" style="flex:1;" onclick="handleLogin()">تسجيل الدخول</button>
+        <button class="btn-gold" style="flex:1; background:#333; color:#fff;" onclick="handleSignUp()">إنشاء حساب جديد</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة الشراء والدفع عبر BaridiMob -->
+  <div class="modal" id="payment-modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('payment-modal')">&times;</span>
+      <h2 style="color:var(--gold-primary); margin-bottom:15px; font-family:'Amiri', serif;">تأكيد عملية الشراء والتحويل</h2>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">
+        يرجى التحويل لحساب **BaridiMob** المباشر الخاص بنا. (يحتسب منها تلقائياً نسبة عمولة المنصة للمدير).
+      </p>
+      <div style="background:#000; padding:15px; border:1px solid var(--border-color); border-radius:4px; margin-bottom:20px; text-align:center;">
+        <div style="color:var(--gold-light); font-weight:bold; font-size:1.1rem;">RIP BaridiMob: 00799999000213456789</div>
+        <div style="color:var(--text-muted); font-size:0.85rem; margin-top:5px;">المبلغ المطلوب: <span id="pay-amount">0</span> دج</div>
+      </div>
+      <div class="form-group">
+        <label>إرفاق صورة وصل التحويل (BaridiMob Receipt)</label>
+        <input type="file" id="receipt-file" accept="image/*">
+      </div>
+      <button class="btn-gold" style="width:100%;" onclick="submitOrder()">إرسال الطلب والتأكيد</button>
+    </div>
+  </div>
+
+  <!-- لوحة تحكم المدير العام (Admin Panel Modal) -->
+  <div class="modal" id="admin-modal">
+    <div class="modal-content" style="max-width:800px;">
+      <span class="close-modal" onclick="closeModal('admin-modal')">&times;</span>
+      <h2 style="color:var(--gold-primary); margin-bottom:20px; font-family:'Amiri', serif;">⚙️ لوحة تحكم المدير العام (NIJI Zone)</h2>
+      
+      <!-- إحصائيات الأرباح والعمولات -->
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; margin-bottom:25px;">
+        <div style="background:#000; padding:15px; border:1px solid var(--border-color); text-align:center;">
+          <div style="color:var(--text-muted); font-size:0.8rem;">إجمالي المبيعات</div>
+          <div style="color:var(--gold-light); font-size:1.4rem; font-weight:bold;">124,000 دج</div>
+        </div>
+        <div style="background:#000; padding:15px; border:1px solid var(--border-color); text-align:center;">
+          <div style="color:var(--text-muted); font-size:0.8rem;">عمولة بريدي موب المحصلة</div>
+          <div style="color:var(--success-green); font-size:1.4rem; font-weight:bold;">18,600 دج</div>
+        </div>
+        <div style="background:#000; padding:15px; border:1px solid var(--border-color); text-align:center;">
+          <div style="color:var(--text-muted); font-size:0.8rem;">الطلبات المعلقة</div>
+          <div style="color:#f59e0b; font-size:1.4rem; font-weight:bold;">3 طلبات</div>
+        </div>
+      </div>
+
+      <!-- نموذج إضافة كتاب / كورس جديد -->
+      <h3 style="color:#fff; margin-bottom:15px;">إضافة كتاب أو كورس جديد للمنصة</h3>
+      <div class="form-group">
+        <label>عنوان الكتاب / الكورس</label>
+        <input type="text" id="new-book-title">
+      </div>
+      <div style="display:flex; gap:15px;">
+        <div class="form-group" style="flex:1;">
+          <label>اسم المؤلف / الحرفي</label>
+          <input type="text" id="new-book-author">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>التصنيف</label>
+          <select id="new-book-cat">
+            <option value="فلسفة">الفلسفة والوجود</option>
+            <option value="ديني">الكتب الدينية</option>
+            <option value="تعليمي">الكتب والكورسات التعليمية</option>
+            <option value="حرفيين">مكتبة الحرفيين (تبريد، تكييف، غسالات...)</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex; gap:15px;">
+        <div class="form-group" style="flex:1;">
+          <label>السعر (0 للمجاني)</label>
+          <input type="number" id="new-book-price" value="0">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>رابط الملف / Google Drive</label>
+          <input type="url" id="new-book-url" placeholder="https://drive.google.com/...">
+        </div>
+      </div>
+      <button class="btn-gold" style="width:100%;" onclick="addNewBook()">نشر الإصدار في المنصة</button>
+    </div>
+  </div>
+
+  <!-- التذييل والتواصل -->
   <footer id="contact">
     <p>جميع الحقوق محفوظة منصة NIJI-APORIA</p>
     <p style="margin-top:10px;">
-      للتواصل عبر البريد: <a href="mailto:niji01@gmail.com">niji01@gmail.com</a> | 
+      البريد الإلكتروني الرسمي: <a href="mailto:niji01@gmail.com">niji01@gmail.com</a> | 
       واتساب الأعمال: <a href="https://wa.me/2139146440558" target="_blank">+213 91 46 44 05 58</a>
     </p>
   </footer>
 
+  <!-- الأكواد والتشغيل البرمجي -->
   <script>
-    // إعداد الاتصال بـ Supabase
+    // 1. الاتصال بـ Supabase
     const SUPABASE_URL = 'https://dfjnqbjfnmatcdznrjka.supabase.co';
-    const SUPABASE_KEY = 'أدخل_مفتاح_ANON_KEY_هنا';
+    const SUPABASE_KEY = 'ضع_مفتاح_ANON_KEY_الخاص_بمشروعك_هنا';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let count = 0;
+    // قاعدة بيانات تجريبية فورية للظهور المباشر
+    let sampleBooks = [
+      { id: 1, title: "مبادئ التفكير الفلسفي", author: "الخضير MR NIJI", cat: "فلسفة", price: 0, img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80", url: "#" },
+      { id: 2, title: "دليل صيانة المكيفات والتبريد", author: "ورشة NIJI COOL", cat: "حرفيين", price: 1500, img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80", url: "#" },
+      { id: 3, title: "معجم مصطلحات العقيدة", author: "مؤلف معرفي", cat: "ديني", price: 0, img: "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=400&q=80", url: "#" },
+      { id: 4, title: "من الصفر إلى احتراف صيانة الغسالات", author: "MR NIJI", cat: "حرفيين", price: 2500, img: "https://images.unsplash.com/photo-1582735689369-4fe89db7114c?auto=format&fit=crop&w=400&q=80", url: "#" }
+    ];
+
+    let currentCategory = 'الكل';
+    let dhikrCount = 0;
+
+    // تشغيل التطبيق عند فتح الصفحة
+    window.addEventListener('DOMContentLoaded', () => {
+      renderBooks();
+      checkAdminStatus();
+    });
+
+    // عرض الكتب في الشبكة
+    function renderBooks() {
+      const grid = document.getElementById('books-grid');
+      grid.innerHTML = '';
+
+      const filtered = sampleBooks.filter(book => {
+        const matchesCat = currentCategory === 'الكل' || book.cat === currentCategory;
+        const searchInput = document.getElementById('global-search').value.toLowerCase();
+        const matchesSearch = book.title.toLowerCase().includes(searchInput) || book.author.toLowerCase().includes(searchInput);
+        return matchesCat && matchesSearch;
+      });
+
+      filtered.forEach(book => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="badge">${book.price === 0 ? 'مجاني PDF' : 'مدفوع'}</div>
+          <div class="card-img" style="background-image: url('${book.img}');"></div>
+          <div class="card-body">
+            <h3 class="card-title">${book.title}</h3>
+            <div class="card-author">${book.author}</div>
+            <div class="card-desc">إصدار معرفي متاح للقراءة والتحميل المباشر بصيغ متعددة أو الربط مع Google Drive.</div>
+            <div class="card-footer">
+              <div class="price-tag">${book.price === 0 ? 'مجاناً' : book.price + ' دج'}</div>
+              ${book.price === 0 
+                ? `<a href="${book.url}" class="btn-gold" target="_blank">تحميل PDF</a>` 
+                : `<button class="btn-gold" onclick="openPayment(${book.price})">شراء عبر بريدي موب</button>`}
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // تصفية الأقسام
+    function selectCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      renderBooks();
+    }
+
+    function filterBooks() { renderBooks(); }
+
+    // التحكم بالعدّاد
     function incrementDhikr() {
-      count++;
-      document.getElementById('counter-val').innerText = count;
+      dhikrCount++;
+      document.getElementById('counter-val').innerText = dhikrCount;
+    }
+
+    // إدارة النوافذ المنبثقة
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function openPayment(amount) {
+      document.getElementById('pay-amount').innerText = amount;
+      openModal('payment-modal');
+    }
+
+    function submitOrder() {
+      alert('تم إرسال وصل التحويل بنجاح! سيتم التحقق من الطلب وتحصيل عمولة بريدي موب وتفعيل الكتاب في بروفيلك خلال دقائق.');
+      closeModal('payment-modal');
+    }
+
+    // التحقق من صلاحيات المدير العام
+    async function checkAdminStatus() {
+      // إظهار رابط الإدارة افتراضياً للتجربة والتحكم السريع للمدير
+      const adminHolder = document.getElementById('admin-link-holder');
+      adminHolder.innerHTML = `<button class="btn-gold" style="background:#f59e0b; color:#000;" onclick="openModal('admin-modal')">⚙️ لوحة المدير العام</button>`;
+    }
+
+    function addNewBook() {
+      const title = document.getElementById('new-book-title').value;
+      const author = document.getElementById('new-book-author').value;
+      const cat = document.getElementById('new-book-cat').value;
+      const price = parseFloat(document.getElementById('new-book-price').value);
+      const url = document.getElementById('new-book-url').value;
+
+      if (!title || !author) { alert('يرجى ملء كافة الحقول الأساسية'); return; }
+
+      sampleBooks.unshift({
+        id: Date.now(),
+        title: title,
+        author: author,
+        cat: cat,
+        price: price,
+        img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80",
+        url: url || "#"
+      });
+
+      renderBooks();
+      closeModal('admin-modal');
+      alert('تم نشر الإصدار بنجاح في المنصة!');
     }
   </script>
 </body>
