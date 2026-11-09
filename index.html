@@ -1057,3 +1057,47 @@ async function loadAdminDashboard(){
   ["author_commissions","id,author_id,book_id,order_id,gross_amount,commission_amount,author_amount,status,created_at","adminCommissions",r=>[esc(r.author_id),esc(r.book_id),esc(r.order_id),esc(fmt(r.gross_amount)),esc(fmt(r.commission_amount)),esc(fmt(r.author_amount)),esc(r.status)],["المؤلف","الكتاب","الطلب","الإجمالي","عمولة المنصة","حصة المؤلف","الحالة"]],
   ["withdrawal_requests","id,user_id,amount,payment_method,payment_details,status,admin_note,created_at","adminWithdrawals",r=>[esc(r.user_id),esc(fmt(r.amount)),esc(r.payment_method),esc(r.payment_details||"—"),esc(r.status),esc(r.admin_note||"—")],["المستخدم","المبلغ","الطريقة","التفاصيل","الحالة","ملاحظة المدير"]],
   ["se
+// NIJI APORIA — Authentication Event Binding
+(function bindAuthEvents() {
+  const bind = () => {
+    const submit = document.getElementById("authSubmit");
+    const toggle = document.getElementById("authToggle");
+    const close = document.getElementById("authClose");
+    const account = document.getElementById("accountAuth");
+    const reset = document.getElementById("resetPassword");
+
+    if (submit) {
+      submit.addEventListener("click", (event) => {
+        event.preventDefault();
+        submitAuth();
+      });
+    }
+
+    if (toggle) {
+      toggle.addEventListener("click", () => {
+        showAuth(authMode === "login" ? "register" : "login");
+      });
+    }
+
+    if (close) {
+      close.addEventListener("click", closeAuth);
+    }
+
+    if (account) {
+      account.addEventListener("click", () => showAuth("login"));
+    }
+
+    if (reset) {
+      reset.addEventListener("click", resetPassword);
+    }
+
+    console.log("NIJI APORIA: Authentication events initialized.");
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bind, { once: true });
+  } else {
+    bind();
+  }
+})();
+   
