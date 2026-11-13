@@ -1,980 +1,313 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080808">
-<meta name="description" content="NIJI APORIA — موسوعة مستقلة للفلسفة والمعرفة الإنسانية">
+<meta name="theme-color" content="#070707">
 <title>NIJI APORIA — NO IDENTITY JUST INFINITY</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.81.1"></script>
-<script src="./config.js"></script>
-
 <style>
-:root{
---bg:#080808;--panel:#111;--gold:#c6a45c;
---gold2:#ead6a0;--text:#eee9df;
---muted:#99938a;--line:#42351f;
---green:#78c69a;--red:#dc8888;
-}
+:root{--g:#c6a45c;--g2:#ecd9a6;--l:#3b2f1b;--m:#9b948a}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;scroll-padding-top:85px}
-body{background:var(--bg);color:var(--text);font-family:Cairo,sans-serif;line-height:1.85}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
+html{scroll-behavior:smooth;scroll-padding-top:110px}
+body{background:#070707;color:#eee9df;font:15px/1.8 Cairo,sans-serif;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
-.container{width:min(1160px,92%);margin:auto}
-header{position:sticky;top:0;z-index:20;background:#090909ed;backdrop-filter:blur(15px);border-bottom:1px solid var(--line)}
-.nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:15px}
-.logo{font:700 27px "Cormorant Garamond";color:var(--gold2);direction:ltr;letter-spacing:3px;white-space:nowrap}
-nav{display:flex;gap:16px;align-items:center}
-nav a{font-size:12px;color:#ccc}
-nav a:hover{color:var(--gold)}
-.nav-actions{display:flex;gap:7px}
-.menu{display:none}
-.btn{background:transparent;border:1px solid var(--gold);color:var(--gold2);padding:8px 15px;border-radius:3px;font-size:12px}
-.btn.primary{background:var(--gold);color:#090909;font-weight:700}
-.btn.danger{border-color:#a44;color:#e99}
+.w{width:min(1100px,92%);margin:auto}
+header{position:sticky;top:0;z-index:20;background:#080808ee;backdrop-filter:blur(14px);border-bottom:1px solid var(--l)}
+.nav{display:flex;align-items:center;justify-content:space-between;min-height:58px;gap:10px}
+.logo{font:700 23px "Cormorant Garamond";letter-spacing:3px;color:var(--g2);direction:ltr}
+nav{display:flex;gap:18px;font-size:13px;overflow-x:auto;white-space:nowrap;padding:0 0 8px}
+.btn{background:0;border:1px solid var(--g);color:var(--g2);padding:8px 16px;border-radius:6px;font:inherit;font-size:13px;cursor:pointer;display:inline-block}
+.btn.p{background:linear-gradient(135deg,#d8b76c,#b08d46);color:#0a0a0a;font-weight:700;border-color:transparent}
+.btn.d{border-color:#a55;color:#eb9a9a}
 .btn:disabled{opacity:.5}
-.hero{min-height:620px;display:grid;place-items:center;text-align:center;position:relative;overflow:hidden;background:radial-gradient(ellipse at center,#241d11 0%,#101010 38%,#080808 78%)}
-.infinity-art{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;opacity:.16}
-.infinity-art svg{width:min(760px,110%);height:auto;filter:drop-shadow(0 0 25px #c6a45c)}
-.hero-content{position:relative;z-index:2;padding:75px 0}
-.eyebrow{font-size:11px;color:var(--gold);letter-spacing:5px;direction:ltr}
-.hero h1{font:700 clamp(48px,9vw,95px) "Cormorant Garamond";color:var(--gold2);letter-spacing:5px;line-height:1.2;margin:18px 0}
-.hero h2{font-size:21px;font-weight:500}
-.hero p{max-width:690px;margin:18px auto 28px;color:#bcb5a9;font-size:14px}
-.infinity-caption{font:600 19px "Cormorant Garamond";color:var(--gold2);letter-spacing:5px;direction:ltr;margin:22px 0}
-.section{padding:75px 0}
-.section-head{text-align:center;margin-bottom:32px}
-.section-head small{color:var(--gold);font-size:11px;letter-spacing:3px;direction:ltr}
-.section-head h2{font-size:27px;margin-top:8px}
-.section-head p{color:var(--muted);font-size:12px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.card,.book,.panel{background:linear-gradient(145deg,#171717,#101010);border:1px solid var(--line);padding:22px;border-radius:3px}
-.card{transition:.25s}
-.card:hover,.book:hover{border-color:var(--gold);transform:translateY(-3px)}
-.number{font:30px "Cormorant Garamond";color:var(--gold)}
-.card h3{font-size:17px;margin:8px 0}
-.card p,.book p{font-size:12px;color:var(--muted)}
-.card a{display:inline-block;margin-top:12px;color:var(--gold);font-size:12px}
-.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:20px}
-.field{background:#151515;color:var(--text);border:1px solid #423a2d;padding:11px 12px;border-radius:3px;width:100%;min-width:0}
-.toolbar input{flex:1;min-width:180px;width:auto}
-.toolbar select{width:auto;min-width:140px}
-.books{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.book-cover{height:190px;background:radial-gradient(#342918,#090909);border:1px solid #4a3b23;display:grid;place-items:center;color:var(--gold);font:25px "Cormorant Garamond";margin-bottom:14px;overflow:hidden}
-.book-cover img{width:100%;height:100%;object-fit:cover}
-.book h3{font-size:15px}
-.price{color:var(--gold2);font-weight:700;font-size:13px;margin:8px 0}
-.tag{display:inline-block;border:1px solid var(--line);color:var(--gold);font-size:10px;padding:2px 8px;margin-top:5px}
-.book .btn{margin-top:12px}
-.panel{margin-top:17px}
-.panel h3{color:var(--gold2);margin-bottom:10px;font-size:17px}
-.inline-form{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
-.wide{grid-column:1/-1}
-.hidden{display:none!important}
-.notice{font-size:12px;color:var(--muted);margin-top:10px;white-space:pre-wrap}
-.status{font-size:12px;color:var(--gold)}
-.quote{text-align:center;font:26px "Cormorant Garamond";color:var(--gold2)}
-footer{border-top:1px solid var(--line);padding:40px 0;text-align:center;color:var(--muted);font-size:11px}
-.modal{position:fixed;inset:0;background:#000d;z-index:50;display:none;place-items:center;padding:14px}
-.modal.open{display:grid}
-.modal-box{width:min(460px,100%);max-height:92vh;overflow:auto;background:#141414;border:1px solid var(--gold);padding:24px}
-.modal-box h2{color:var(--gold2);margin:12px 0}
-.modal-box input{margin:7px 0}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.stat{background:#171717;border:1px solid var(--line);padding:13px}
-.stat small{color:var(--muted);font-size:10px}
-.stat strong{display:block;color:var(--gold);font-size:21px}
-.admin-shell{display:grid;grid-template-columns:190px 1fr;gap:15px}
-.admin-nav{display:grid;gap:6px;align-content:start}
-.admin-nav button{background:#171717;color:var(--text);border:1px solid var(--line);padding:9px;text-align:right;font-size:12px}
-.admin-nav button.active{color:var(--gold);border-color:var(--gold)}
-.admin-pane{display:none;min-width:0}
-.admin-pane.active{display:block}
-.table-wrap{overflow:auto;margin-top:12px}
-table{border-collapse:collapse;width:100%;min-width:500px;font-size:11px}
-td,th{padding:10px;border-bottom:1px solid var(--line);text-align:right}
-th{color:var(--gold)}
-.empty{border:1px dashed var(--line);padding:20px;text-align:center;color:var(--muted);font-size:12px}
-.toast{position:fixed;bottom:15px;left:15px;right:15px;margin:auto;max-width:500px;background:#19160f;border:1px solid var(--gold);padding:12px;z-index:100;display:none;font-size:12px}
-.toast.show{display:block}
-@media(max-width:900px){
-nav{display:none;position:absolute;top:70px;right:0;left:0;background:#111;padding:20px;flex-direction:column}
-nav.show{display:flex}.menu{display:block}
-.grid,.books{grid-template-columns:repeat(2,1fr)}
-.admin-shell{grid-template-columns:1fr}
-.admin-nav{display:flex;overflow:auto}
-.admin-nav button{white-space:nowrap}
-}
-@media(max-width:540px){
-.grid,.books{grid-template-columns:1fr}
-.hero{min-height:510px}
-.section{padding:50px 0}
-.hero h1{letter-spacing:2px}
-.logo{font-size:21px}
-.nav{min-height:65px}
-.nav-actions .btn{padding:7px}
-.inline-form{grid-template-columns:1fr}
-.stats{grid-template-columns:repeat(2,1fr)}
-.infinity-caption{font-size:15px;letter-spacing:3px}
-}
+.hero{text-align:center;padding:90px 0;background:radial-gradient(ellipse at center,#2a2112,#070707 70%)}
+.hero small{color:var(--g);letter-spacing:5px;font-size:11px;direction:ltr;display:block}
+.hero h1{font:700 clamp(46px,11vw,96px) "Cormorant Garamond";letter-spacing:5px;color:var(--g2);line-height:1.2;margin:10px 0}
+.hero p{max-width:620px;margin:12px auto 22px;color:#bdb6aa}
+.sec{padding:56px 0}
+.t{text-align:center;font-size:26px;margin-bottom:24px}
+.t::after{content:"";display:block;width:50px;height:2px;background:var(--g);margin:8px auto 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.card{background:#141414;border:1px solid var(--l);border-radius:8px;padding:18px;margin-bottom:0}
+.panel{background:#141414;border:1px solid var(--l);border-radius:8px;padding:20px;margin-top:16px}
+.card h3,.panel h3{color:var(--g2);margin-bottom:6px;font-size:17px}
+.cover{height:190px;background:radial-gradient(#3a2e1a,#0a0a0a);border-radius:4px;display:grid;place-items:center;color:var(--g);font:22px "Cormorant Garamond";overflow:hidden;margin-bottom:10px}
+.cover img{width:100%;height:100%;object-fit:cover}
+input,select,textarea{width:100%;background:#101010;color:inherit;border:1px solid #3d3527;padding:11px;border-radius:6px;font:inherit;margin:5px 0}
+.bar{display:flex;gap:8px;margin-bottom:18px}.bar input{flex:1}.bar select{width:auto}
+.hide{display:none!important}
+.modal{position:fixed;inset:0;background:#000c;display:none;place-items:center;padding:14px;z-index:50}
+.modal.on{display:grid}
+.box{background:#121212;border:1px solid var(--g);border-radius:8px;padding:22px;width:min(440px,100%);max-height:90vh;overflow:auto}
+.msg{font-size:13px;color:var(--m);margin-top:6px;white-space:pre-wrap}
+.ok{color:#78c69a}.bad{color:#e08a8a}
+table{border-collapse:collapse;width:100%;min-width:300px;font-size:12px}
+td,th{padding:8px;border-bottom:1px solid var(--l);text-align:right}th{color:var(--g)}
+.toast{position:fixed;bottom:16px;left:16px;right:16px;margin:auto;max-width:480px;background:#1b170e;border:1px solid var(--g);padding:12px;border-radius:8px;display:none;z-index:99;font-size:13px}
+.toast.on{display:block}
+footer{border-top:1px solid var(--l);padding:36px 0;text-align:center;color:var(--m);font-size:12px}
 </style>
 </head>
-
 <body>
+<header><div class="w">
+<div class="nav"><a class="logo" href="#home">NIJI APORIA</a><button class="btn" onclick="openAuth('login')">الدخول / التسجيل</button></div>
+<nav><a href="#home">الرئيسية</a><a href="#domains">المعرفة</a><a href="#library">المكتبة</a><a href="#account">حسابي</a><a href="#about">عن المشروع</a></nav>
+</div></header>
 
-<header>
-<div class="container nav">
-<a class="logo" href="#home">NIJI APORIA</a>
-<button class="btn menu" id="menuButton">☰</button>
-<nav id="mainNav">
-<a href="#home">الرئيسية</a>
-<a href="#domains">المعرفة</a>
-<a href="#archive">الأرشيف</a>
-<a href="#library">المكتبة</a>
-<a href="#authors">المؤلفون</a>
-<a href="#account">حسابي</a>
-<a href="#about">عن المشروع</a>
-</nav>
-<div class="nav-actions">
-<button class="btn" id="authOpen">الدخول / التسجيل</button>
-</div>
-</div>
-</header>
-
-<main>
-<section class="hero" id="home">
-<div class="infinity-art">
-<svg viewBox="0 0 900 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M450 250 C320 55 80 90 80 250 C80 410 320 445 450 250 C580 55 820 90 820 250 C820 410 580 445 450 250Z" stroke="#EAD6A0" stroke-width="9"/>
-<path d="M450 250 C380 145 280 130 220 170 L220 330 C280 370 380 355 450 250" stroke="#EAD6A0" stroke-width="3"/>
-<path d="M450 250 C520 145 620 130 680 170 L680 330 C620 370 520 355 450 250" stroke="#EAD6A0" stroke-width="3"/>
-<path d="M220 170 L450 250 L680 170 M220 330 L450 250 L680 330" stroke="#EAD6A0" stroke-width="2"/>
-<path d="M250 165 L250 335 M650 165 L650 335" stroke="#EAD6A0" stroke-width="2"/>
-</svg>
-</div>
-<div class="container hero-content">
-<div class="eyebrow">AN INDEPENDENT KNOWLEDGE UNIVERSE</div>
+<section class="hero" id="home"><div class="w">
+<small>AN INDEPENDENT KNOWLEDGE UNIVERSE</small>
 <h1>NIJI APORIA</h1>
-<h2>فنّ التساؤل... وما وراء حدود المعرفة</h2>
-<p>موسوعة مستقلة للفلسفة والمعرفة الإنسانية. فضاء لاستكشاف الوجود والوعي والعلوم والتاريخ والإنسان، بعيداً عن الإجابات الجاهزة.</p>
-<div class="infinity-caption">NO IDENTITY JUST INFINITY</div>
-<a class="btn primary" href="#domains">اكتشف عوالم المعرفة</a>
-<a class="btn" href="#library">استكشف المكتبة</a>
-</div>
-</section>
+<h2 style="font-weight:600;font-size:20px">فنّ التساؤل... وما وراء حدود المعرفة</h2>
+<p>موسوعة مستقلة للفلسفة والمعرفة الإنسانية، ومكتبة رقمية للكتب المجانية والمدفوعة.</p>
+<p style="font:600 18px 'Cormorant Garamond';letter-spacing:5px;color:var(--g2);direction:ltr">NO IDENTITY JUST INFINITY</p>
+<a class="btn p" href="#library">استكشف المكتبة</a> <a class="btn" href="#domains">أبواب المعرفة</a>
+</div></section>
 
-<section class="section" id="domains">
-<div class="container">
-<div class="section-head"><small>THE DOMAINS OF KNOWLEDGE</small><h2>أبواب المعرفة</h2><p>مسارات متعددة لفهم الإنسان والعالم والوجود.</p></div>
-<div class="grid">
-<article class="card"><div class="number">01</div><h3>الفلسفة والميتافيزيقا</h3><p>الوجود، الأخلاق، المنطق، العقل، الحقيقة ونظرية المعرفة.</p><a href="#archive">استكشف ←</a></article>
-<article class="card"><div class="number">02</div><h3>علم النفس والإنسان</h3><p>السلوك، الإدراك، الشخصية، الذاكرة والوعي.</p><a href="#archive">استكشف ←</a></article>
-<article class="card"><div class="number">03</div><h3>العلوم والكون</h3><p>الفيزياء، الرياضيات، الأحياء، الفلك والكون.</p><a href="#archive">استكشف ←</a></article>
-<article class="card"><div class="number">04</div><h3>التاريخ والحضارات</h3><p>الحضارات القديمة، تاريخ الأفكار والتحولات الإنسانية.</p><a href="#archive">استكشف ←</a></article>
-<article class="card"><div class="number">05</div><h3>الذكاء والاستراتيجية</h3><p>التفكير النقدي، الذكاء، اتخاذ القرار والاستراتيجية.</p><a href="#archive">استكشف ←</a></article>
-<article class="card"><div class="number">06</div><h3>الأدب والفنون</h3><p>الرواية، الشعر، اللغة، الثقافة والفنون الإنسانية.</p><a href="#archive">استكشف ←</a></article>
-</div>
-</div>
-</section>
+<section class="sec" id="domains"><div class="w"><h2 class="t">أبواب المعرفة</h2><div class="grid">
+<div class="card"><h3>الفلسفة والميتافيزيقا</h3><p class="msg">الوجود، الأخلاق، المنطق، العقل ونظرية المعرفة.</p></div>
+<div class="card"><h3>علم النفس والإنسان</h3><p class="msg">السلوك، الإدراك، الشخصية، الذاكرة والوعي.</p></div>
+<div class="card"><h3>العلوم والكون</h3><p class="msg">الفيزياء، الرياضيات، الأحياء والفلك.</p></div>
+<div class="card"><h3>التاريخ والحضارات</h3><p class="msg">الحضارات القديمة وتاريخ الأفكار.</p></div>
+<div class="card"><h3>الذكاء والاستراتيجية</h3><p class="msg">التفكير النقدي واتخاذ القرار.</p></div>
+<div class="card"><h3>الأدب والفنون</h3><p class="msg">الرواية، الشعر، اللغة والثقافة.</p></div>
+</div></div></section>
 
-<section class="section" id="archive">
-<div class="container">
-<div class="section-head"><small>THE KNOWLEDGE ARCHIVE</small><h2>أرشيف المعرفة</h2><p>مساحة المقالات والأفكار والدراسات.</p></div>
-<div class="toolbar">
-<input id="searchInput" class="field" placeholder="ابحث عن موضوع...">
-<select id="categoryFilter" class="field">
-<option value="">جميع الأقسام</option>
-<option>الفلسفة</option><option>الوجود والوعي</option><option>العلوم</option><option>علم النفس</option><option>التاريخ</option><option>الأدب</option>
-</select>
-</div>
-<div class="grid" id="articleList">
-<article class="card article" data-category="الفلسفة"><div class="number">01</div><h3>ما الفلسفة؟</h3><p>مدخل إلى التفكير الفلسفي وطبيعة السؤال.</p></article>
-<article class="card article" data-category="الوجود والوعي"><div class="number">02</div><h3>مشكلة الوعي</h3><p>هل الوعي نشاط دماغي فقط؟</p></article>
-<article class="card article" data-category="العلوم"><div class="number">03</div><h3>حدود المعرفة العلمية</h3><p>ما الذي يمكن للعلم معرفته؟</p></article>
-</div>
-<p id="articleEmpty" class="notice hidden">لا توجد نتائج.</p>
-</div>
-</section>
+<section class="sec" id="library"><div class="w"><h2 class="t">المكتبة الرقمية</h2>
+<div class="bar"><input id="bq" placeholder="ابحث عن كتاب..." oninput="draw()"><select id="bf" onchange="draw()"><option value="">الكل</option><option value="free">مجاني</option><option value="paid">مدفوع</option></select></div>
+<div class="grid" id="bl"><div class="card">جارٍ تحميل المكتبة...</div></div>
+</div></section>
 
-<section class="section" id="library">
-<div class="container">
-<div class="section-head"><small>THE DIGITAL LIBRARY</small><h2>المكتبة الرقمية</h2><p>مؤلفات وكتب مجانية ومدفوعة.</p></div>
-<div class="toolbar">
-<input id="bookSearch" class="field" placeholder="ابحث عن كتاب أو مؤلف...">
-<select id="bookFilter" class="field">
-<option value="">كل الكتب</option><option value="free">مجاني</option><option value="paid">مدفوع</option>
-</select>
-</div>
-<div class="books" id="bookList"><div class="empty">جارٍ تحميل المكتبة...</div></div>
-<p id="bookEmpty" class="notice hidden">لا توجد نتائج مطابقة.</p>
-</div>
-</section>
+<section class="sec" id="account"><div class="w"><h2 class="t">مساحتك الخاصة</h2>
+<div class="panel" id="out"><h3>مرحباً بك</h3><p class="msg" style="margin-bottom:10px">سجّل الدخول أو أنشئ حساباً لشراء الكتب وتنزيلها.</p><button class="btn p" onclick="openAuth('login')">الدخول أو التسجيل</button></div>
+<div class="panel hide" id="in"><h3 id="pn"></h3><p id="pe" class="msg"></p><p id="pr" style="color:var(--g)"></p>
+<div style="margin-top:10px"><button class="btn d" onclick="out()">تسجيل الخروج</button> <a class="btn" target="_blank" rel="noopener" href="https://wa.me/213558444691?text=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%A7%D9%86%D8%B6%D9%85%D8%A7%D9%85%20%D9%83%D9%85%D8%A4%D9%84%D9%81">طلب أن أصبح مؤلفاً</a></div></div>
 
-<section class="section" id="authors">
-<div class="container">
-<div class="section-head"><small>AUTHOR COMMUNITY</small><h2>المؤلفون والمساهمون</h2><p>ساهم في نشر المعرفة الإنسانية.</p></div>
-<div class="grid">
-<article class="card"><div class="number">01</div><h3>انضم كمؤلف</h3><p>قدّم طلباً للانضمام إلى مجتمع المؤلفين.</p></article>
-<article class="card"><div class="number">02</div><h3>انشر مؤلفاتك</h3><p>ارفع كتبك وملفاتك للمراجعة والنشر.</p></article>
-<article class="card"><div class="number">03</div><h3>تابع مستحقاتك</h3><p>تابع مبيعاتك وعمولاتك وطلباتك.</p></article>
-</div>
-</div>
-</section>
+<div class="panel hide" id="authorBox"><h3>نشر كتاب</h3>
+<input id="bt" placeholder="عنوان الكتاب"><textarea id="bd" rows="3" placeholder="وصف الكتاب"></textarea>
+<select id="bc"><option value="">التصنيف (اختياري)</option></select>
+<select id="bfree"><option value="1">مجاني</option><option value="0">مدفوع</option></select>
+<input id="bp" type="number" min="0" placeholder="السعر بالدينار (للمدفوع)">
+<p class="msg">ملفات الكتاب (يمكن اختيار عدة صيغ معاً: PDF, EPUB, MOBI, DOCX, TXT, ZIP, MP3...)</p>
+<input id="bfile" type="file" multiple>
+<p class="msg">غلاف الكتاب (اختياري)</p><input id="bcov" type="file" accept="image/*">
+<button class="btn p" id="bgo" onclick="publish()">نشر / إرسال للمراجعة</button><p id="bm" class="msg"></p>
+<h3 style="margin-top:14px">كتبي</h3><div id="mb"></div></div>
 
-<section class="section">
-<div class="container">
-<div class="section-head"><small>THOUGHT & REFLECTION</small><h2>مساحة للتأمل</h2></div>
-<div class="panel"><p class="quote">«إن السؤال الذي لا يهدأ، قد يكون أصدق من إجابة لا تقبل الشك.»</p></div>
-</div>
-</section>
+<div class="panel hide" id="myOrders"><h3>طلباتي</h3><div id="mo"></div></div>
 
-<section class="section" id="account">
-<div class="container">
-<div class="section-head"><small>YOUR PERSONAL SPACE</small><h2>مساحتك الخاصة</h2></div>
-<div class="panel">
-<div id="signedOut"><h3>مرحباً بك في NIJI APORIA</h3><p>سجّل الدخول أو أنشئ حساباً.</p><button class="btn primary" id="accountAuth">الدخول أو التسجيل</button></div>
-<div id="signedIn" class="hidden">
-<h3 id="profileName">حسابك</h3>
-<p id="profileEmail"></p><p id="profileRole" class="status"></p>
-<button class="btn" id="refreshAccount">تحديث الحساب</button>
-<button class="btn danger" id="signOut">تسجيل الخروج</button>
-</div>
-</div>
+<div class="panel hide" id="adminBox"><h3>لوحة الإدارة — MR NIJI</h3>
+<p class="msg">كتب بانتظار المراجعة</p><div id="ab"></div>
+<p class="msg" style="margin-top:14px">طلبات بانتظار تأكيد الدفع</p><div id="ao"></div>
+<p class="msg" style="margin-top:14px">المستخدمون (اجعل أحدهم مؤلفاً)</p><div id="au"></div></div>
+</div></section>
 
-<div class="panel hidden" id="authorPanel">
-<h3>مساحة المؤلف</h3>
-<p class="notice">أضف كتابك وأرسله للمراجعة.</p>
-<div class="inline-form">
-<input id="newBookTitle" class="field" placeholder="عنوان الكتاب">
-<input id="newBookSlug" class="field" placeholder="رابط مختصر اختياري">
-<textarea id="newBookDescription" class="field wide" placeholder="وصف الكتاب"></textarea>
-<select id="newBookCategory" class="field"><option value="">اختر التصنيف</option></select>
-<select id="newBookFree" class="field"><option value="true">مجاني</option><option value="false">مدفوع</option></select>
-<input id="newBookPrice" class="field" type="number" min="0" placeholder="السعر بالدينار">
-<input id="newBookFile" class="field wide" type="file" accept=".pdf,.epub,.doc,.docx">
-<input id="newBookCover" class="field wide" type="file" accept="image/*">
-</div>
-<button class="btn primary" id="publishBook">إرسال الكتاب للمراجعة</button>
-<p id="authorMessage" class="notice"></p>
-<div id="myBooks"></div>
-</div>
-<div class="panel"><h3>المفضلة</h3><div id="myFavorites" class="empty">لا توجد عناصر.</div></div>
-<div class="panel"><h3>طلباتي</h3><div id="myOrders" class="empty">لا توجد طلبات.</div></div>
-</div>
-</section>
+<section class="sec" id="about"><div class="w"><h2 class="t">عن NIJI APORIA</h2><div class="panel">
+<p>مشروع معرفي مستقل يجمع الفلسفة والعلوم والتاريخ والأدب في فضاء واحد. لسنا هنا لتقديم أجوبة نهائية، بل لفتح مساحات أوسع للفهم والنقد والتساؤل.</p>
+<p style="color:var(--g);letter-spacing:3px;direction:ltr;margin-top:8px">THE ART OF QUESTIONING.</p></div></div></section>
 
-<section class="section hidden" id="masterAdmin">
-<div class="container">
-<div class="section-head"><small>MASTER ADMINISTRATION</small><h2>لوحة الإدارة الرئيسية — MR NIJI</h2></div>
-<div class="stats" id="adminStats">
-<div class="stat"><small>الكتب</small><strong>—</strong></div>
-<div class="stat"><small>الطلبات</small><strong>—</strong></div>
-<div class="stat"><small>طلبات المؤلفين</small><strong>—</strong></div>
-<div class="stat"><small>السحوبات</small><strong>—</strong></div>
-</div>
-<div class="panel admin-shell">
-<aside class="admin-nav" id="adminNav">
-<button class="active" data-pane="overview">نظرة عامة</button>
-<button data-pane="users">المستخدمون</button>
-<button data-pane="books">الكتب</button>
-<button data-pane="orders">الطلبات والمبيعات</button>
-<button data-pane="commissions">العمولات</button>
-<button data-pane="withdrawals">السحوبات</button>
-<button data-pane="applications">طلبات المؤلفين</button>
-<button data-pane="transactions">المعاملات</button>
-<button data-pane="settings">الإعدادات</button>
-<button data-pane="audit">سجل الإدارة</button>
-</aside>
-<div class="admin-content">
-<div class="admin-pane active" id="pane-overview"><h3>نظرة عامة</h3><div id="overviewData"></div></div>
-<div class="admin-pane" id="pane-users"><h3>المستخدمون</h3><div id="adminUsers"></div></div>
-<div class="admin-pane" id="pane-books"><h3>الكتب</h3><div id="adminBooks"></div></div>
-<div class="admin-pane" id="pane-orders"><h3>الطلبات</h3><div id="adminOrders"></div><div id="adminOrderItems"></div></div>
-<div class="admin-pane" id="pane-commissions"><h3>العمولات</h3><div id="adminCommissions"></div></div>
-<div class="admin-pane" id="pane-withdrawals"><h3>السحوبات</h3><div id="adminWithdrawals"></div></div>
-<div class="admin-pane" id="pane-applications"><h3>طلبات المؤلفين</h3><div id="adminApplications"></div></div>
-<div class="admin-pane" id="pane-transactions"><h3>المعاملات المالية</h3><div id="adminTransactions"></div></div>
-<div class="admin-pane" id="pane-settings"><h3>إعدادات المنصة</h3><div id="adminSettings"></div></div>
-<div class="admin-pane" id="pane-audit"><h3>سجل الإدارة</h3><div id="adminAudit"></div></div>
-</div>
-</div>
-<p id="adminMessage" class="notice"></p>
-</div>
-</section>
+<footer><div class="w"><div class="logo" style="display:inline-block">NIJI APORIA</div><p>NO IDENTITY JUST INFINITY</p>
+<p><a href="mailto:niji01@gmail.com">niji01@gmail.com</a> · <a href="https://wa.me/213558444691" target="_blank" rel="noopener">WhatsApp +213558444691</a></p><p>© <span id="yr"></span> NIJI APORIA</p></div></footer>
 
-<section class="section" id="about">
-<div class="container">
-<div class="section-head"><small>ABOUT THE PROJECT</small><h2>عن NIJI APORIA</h2></div>
-<div class="panel">
-<p>NIJI APORIA مشروع معرفي مستقل يجمع الفلسفة والعلوم والتاريخ والأدب والمعرفة الإنسانية في فضاء واحد.</p>
-<hr>
-<p>لسنا هنا لتقديم أجوبة نهائية، بل لفتح مساحات أوسع للفهم والنقد والتساؤل.</p>
-<p class="gold">THE ART OF QUESTIONING.</p>
-</div>
-</div>
-</section>
-</main>
+<div class="modal" id="auth" onclick="if(event.target===this)this.classList.remove('on')"><div class="box">
+<button class="btn" onclick="this.closest('.modal').classList.remove('on')">إغلاق ×</button>
+<h2 id="ath" style="margin:12px 0;color:var(--g2)">تسجيل الدخول</h2>
+<input id="an" class="hide" placeholder="الاسم الكامل"><input id="ae" type="email" placeholder="البريد الإلكتروني"><input id="ap" type="password" placeholder="كلمة المرور">
+<button class="btn p" id="ago" style="width:100%;margin-top:8px" onclick="doAuth()">دخول</button>
+<button class="btn" id="at" style="width:100%;margin-top:8px" onclick="openAuth(mode=='login'?'reg':'login')">إنشاء حساب جديد</button>
+<button class="btn" style="width:100%;margin-top:8px" onclick="reset()">نسيت كلمة المرور؟</button><p id="am" class="msg"></p></div></div>
 
-<footer>
-<div class="container">
-<div class="logo">NIJI APORIA</div>
-<p>NO IDENTITY JUST INFINITY</p>
-<p>للتواصل: niji01@gmail.com · WhatsApp: +213558444691</p>
-<p>© <span id="year"></span> NIJI APORIA</p>
-</div>
-</footer>
+<div class="modal" id="pur" onclick="if(event.target===this)this.classList.remove('on')"><div class="box">
+<button class="btn" onclick="this.closest('.modal').classList.remove('on')">إغلاق ×</button>
+<h2 style="margin:12px 0;color:var(--g2)">طلب شراء</h2><p id="pt"></p>
+<p class="msg">الدفع يدوي: حوّل المبلغ إلى CCP / بريدي موب رقم <b id="payno"></b> ثم أرسل الإيصال على واتساب <a style="color:var(--g)" href="https://wa.me/213558444691" target="_blank" rel="noopener">+213558444691</a>. يفتح الكتاب في حسابك بعد تأكيدك الدفع.</p>
+<input id="pref" placeholder="مرجع الدفع إن وجد"><button class="btn p" onclick="buy()">إرسال الطلب</button><p id="pm" class="msg"></p></div></div>
 
-<div class="modal" id="authModal"><div class="modal-box">
-<button class="btn" id="authClose">إغلاق ×</button>
-<h2 id="authTitle">تسجيل الدخول</h2>
-<input id="authName" class="field hidden" placeholder="الاسم الكامل">
-<input id="authEmail" class="field" type="email" autocomplete="email" placeholder="البريد الإلكتروني">
-<input id="authPassword" class="field" type="password" autocomplete="current-password" placeholder="كلمة المرور">
-<button class="btn primary" id="authSubmit" style="width:100%;margin-top:10px">دخول</button>
-<button class="btn" id="authToggle" style="width:100%;margin-top:8px">إنشاء حساب جديد</button>
-<button class="btn" id="resetPassword" style="width:100%;margin-top:8px">نسيت كلمة المرور؟</button>
-<p id="authMessage" class="notice"></p>
-</div></div>
-
-<div class="modal" id="purchaseModal"><div class="modal-box">
-<button class="btn" id="purchaseClose">إغلاق ×</button>
-<h2>طلب شراء كتاب</h2>
-<p id="purchaseBookTitle"></p>
-<p class="notice">الدفع غير مربوط إلكترونياً حالياً. هذا طلب للمراجعة اليدوية وليس تأكيداً للدفع.</p>
-<input id="paymentReference" class="field" placeholder="مرجع الدفع إن وجد">
-<button class="btn primary" id="purchaseSubmit">إرسال الطلب</button>
-<p id="purchaseMessage" class="notice"></p>
-</div></div>
-<div id="toast" class="toast"></div>
+<div class="modal" id="fm" onclick="if(event.target===this)this.classList.remove('on')"><div class="box">
+<button class="btn" onclick="this.closest('.modal').classList.remove('on')">إغلاق ×</button>
+<h2 id="ftitle" style="margin:12px 0;color:var(--g2)"></h2><div id="flist"></div></div></div>
+<div class="toast" id="toast"></div>
 
 <script>
-"use strict";
-(() => {
-const $ = id => document.getElementById(id);
-const CFG = window.NIJI_CONFIG || {};
-const BUCKET_FILES = "book-files";
-const BUCKET_COVERS = "book-covers";
+const SUPABASE_URL = "dfjnqbjfnmatcdznrjka";
+const SUPABASE_KEY = ""sb_publishable_-qzPi5ArTH8hXEFmVAshnA_qnG9V70P"";
+const PAY = "0020889951 16"; // رقم CCP / بريدي موب
+// =====================================================================================
+const EXTS = "pdf epub mobi azw3 djvu fb2 doc docx odt rtf txt ppt pptx xls xlsx csv zip rar 7z cbz mp3 m4a".split(" "), MAX = 50;
+const $ = i => document.getElementById(i);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "'" }[c]));
+const money = n => Number(n || 0).toLocaleString("ar-DZ");
+const ext = f => (f.name.split(".").pop() || "").toLowerCase();
+let db, user, role = "reader", books = [], mode = "login", sel = null, tt;
 
-let db = null;
-let currentUser = null;
-let currentProfile = null;
-let currentRole = "reader";
-let books = [];
-let categories = [];
-let favorites = new Set();
-let selectedPurchaseBook = null;
-let authMode = "login";
-let busy = false;
-let toastTimer = null;
+function say(id, t, c) { const e = $(id); e.textContent = t || ""; e.className = "msg " + (c || ""); }
+function toast(t) { const e = $("toast"); e.textContent = t; e.classList.add("on"); clearTimeout(tt); tt = setTimeout(() => e.classList.remove("on"), 5000); }
+window.onerror = (m) => toast("خطأ: " + m);
 
-const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({
-"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-}[c]));
-
-const fmt = n => Number(n||0).toLocaleString("ar-DZ");
-
-function message(id,text,kind=""){
-const el=$(id);
-if(el){el.textContent=text||"";el.className="notice "+kind;}
+function openAuth(m) {
+  mode = m; $("ath").textContent = m == "reg" ? "إنشاء حساب جديد" : "تسجيل الدخول";
+  $("an").classList.toggle("hide", m != "reg"); $("ago").textContent = m == "reg" ? "إنشاء الحساب" : "دخول";
+  $("at").textContent = m == "reg" ? "لديك حساب؟ تسجيل الدخول" : "إنشاء حساب جديد";
+  say("am", db ? "" : "أدخل SUPABASE_URL و SUPABASE_KEY في أول سكربت index.html", db ? "" : "bad"); $("auth").classList.add("on");
 }
 
-function notify(text){
-$("toast").textContent=text;
-$("toast").classList.add("show");
-clearTimeout(toastTimer);
-toastTimer=setTimeout(()=>$("toast").classList.remove("show"),4500);
+async function doAuth() {
+  if (!db) return say("am", "أدخل SUPABASE_URL و SUPABASE_KEY في أول سكربت index.html", "bad");
+  const email = $("ae").value.trim(), pw = $("ap").value, name = $("an").value.trim();
+  if (!email || pw.length < 6) return say("am", "أدخل بريداً صحيحاً وكلمة مرور (6 أحرف على الأقل).", "bad");
+  if (mode == "reg" && !name) return say("am", "أدخل اسمك.", "bad");
+  say("am", "جارٍ الاتصال...");
+  try {
+    const r = mode == "reg" ? await db.auth.signUp({ email, password: pw, options: { data: { full_name: name } } }) : await db.auth.signInWithPassword({ email, password: pw });
+    if (r.error) return say("am", r.error.message, "bad");
+    if (r.data.session) { $("auth").classList.remove("on"); await me(); toast("تم بنجاح"); }
+    else say("am", "تم إنشاء الحساب. أكّد بريدك الإلكتروني ثم سجّل الدخول.", "ok");
+  } catch (e) { say("am", e.message, "bad"); }
 }
 
-function showError(e){
-console.error("NIJI APORIA:",e);
-return e?.message || "حدث خطأ غير متوقع.";
+async function reset() {
+  const e = $("ae").value.trim(); if (!db || !e) return say("am", "أدخل بريدك أولاً.", "bad");
+  const r = await db.auth.resetPasswordForEmail(e, { redirectTo: location.href.split("#")[0] });
+  say("am", r.error ? r.error.message : "تحقق من بريدك لاستعادة كلمة المرور.", r.error ? "bad" : "ok");
+}
+async function out() { await db.auth.signOut(); user = null; me(); }
+
+async function me() {
+  const { data } = await db.auth.getSession(); user = data.session?.user || null; role = "reader";
+  if (user) {
+    const p = await db.from("profiles").select("full_name,role").eq("id", user.id).maybeSingle();
+    const a = await db.rpc("is_admin");
+    role = a.data === true ? "admin" : (["author", "seller"].includes(p.data?.role) ? "author" : "reader");
+    $("pn").textContent = p.data?.full_name || user.email; $("pe").textContent = user.email;
+    $("pr").textContent = { admin: "مدير المنصة", author: "مؤلف معتمد", reader: "قارئ" }[role];
+  }
+  $("out").classList.toggle("hide", !!user); $("in").classList.toggle("hide", !user);
+  $("authorBox").classList.toggle("hide", !(user && role != "reader"));
+  $("adminBox").classList.toggle("hide", role != "admin"); $("myOrders").classList.toggle("hide", !user);
+  if (user) { mine(); if (role == "admin") admin(); }
+  draw();
 }
 
-function isAdmin(){return currentRole==="admin";}
-function isAuthor(){return ["admin","author","seller"].includes(currentRole);}
-
-function initSupabase(){
-if(!window.supabase){
-message("authMessage","تعذر تحميل مكتبة Supabase. تحقق من الإنترنت.","bad");
-return;
-}
-if(!CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY){
-message("authMessage","إعدادات config.js غير مكتملة.","bad");
-return;
-}
-try{
-db=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY,{
-auth:{
-persistSession:true,
-autoRefreshToken:true,
-detectSessionInUrl:true
-}
-});
-}catch(e){
-message("authMessage",showError(e),"bad");
-}
+async function loadBooks() {
+  const { data, error } = await db.from("books").select("id,seller_id,title,description,price,currency,cover_path,is_free").eq("status", "published").order("created_at", { ascending: false });
+  if (error) { $("bl").innerHTML = '<div class="card">تعذر تحميل الكتب: ' + esc(error.message) + "</div>"; return; }
+  books = data || []; draw();
 }
 
-function openAuth(mode="login"){
-authMode=mode;
-$("authTitle").textContent=mode==="register"?"إنشاء حساب جديد":"تسجيل الدخول";
-$("authName").classList.toggle("hidden",mode!=="register");
-$("authSubmit").textContent=mode==="register"?"إنشاء الحساب":"دخول";
-$("authToggle").textContent=mode==="register"?"لديك حساب؟ تسجيل الدخول":"إنشاء حساب جديد";
-$("authModal").classList.add("open");
-message("authMessage","");
+function draw() {
+  const q = $("bq").value.trim().toLowerCase(), f = $("bf").value, box = $("bl");
+  const list = books.filter(b => ((b.title || "") + " " + (b.description || "")).toLowerCase().includes(q) && (!f || (f == "free") == !!b.is_free));
+  box.innerHTML = ""; if (!list.length) { box.innerHTML = '<div class="card">لا توجد كتب منشورة حالياً.</div>'; return; }
+  list.forEach(b => {
+    const c = document.createElement("div"); c.className = "card";
+    const cv = b.cover_path ? '<img alt="" src="' + esc(db.storage.from("book-covers").getPublicUrl(b.cover_path).data.publicUrl) + '">' : "NIJI APORIA";
+    c.innerHTML = '<div class="cover">' + cv + "</div><h3>" + esc(b.title) + '</h3><p class="msg">' + esc(b.description) + '</p><p style="color:var(--g2);font-weight:700;margin:6px 0">' + (b.is_free ? "مجاني" : money(b.price) + " " + esc(b.currency || "DZD")) + "</p>";
+    const x = document.createElement("button"); x.className = "btn p"; x.textContent = b.is_free ? "قراءة / تنزيل" : "شراء / فتح"; x.onclick = () => act(b);
+    c.append(x); box.append(c);
+  });
 }
 
-function closeAuth(){$("authModal").classList.remove("open");}
-
-async function submitAuth(){
-if(!db)return message("authMessage","تعذر الاتصال بـ Supabase. راجع config.js.","bad");
-if(busy)return;
-
-const email=$("authEmail").value.trim();
-const password=$("authPassword").value;
-const name=$("authName").value.trim();
-
-if(!email || !password)return message("authMessage","أدخل البريد وكلمة المرور.");
-if(password.length<6)return message("authMessage","كلمة المرور يجب ألا تقل عن 6 أحرف.");
-if(authMode==="register" && !name)return message("authMessage","أدخل اسمك الكامل.");
-
-busy=true;
-$("authSubmit").disabled=true;
-message("authMessage","جارٍ الاتصال...");
-
-try{
-let result;
-if(authMode==="register"){
-result=await db.auth.signUp({
-email,password,options:{data:{full_name:name}}
-});
-}else{
-result=await db.auth.signInWithPassword({email,password});
-}
-if(result.error)throw result.error;
-
-if(result.data.session){
-currentUser=result.data.user;
-await loadAccountData();
-closeAuth();
-notify(authMode==="register"?"تم إنشاء الحساب بنجاح.":"مرحباً بعودتك إلى NIJI APORIA.");
-}else{
-message("authMessage","تم إنشاء الحساب. تحقق من بريدك الإلكتروني لتأكيد التسجيل.","ok");
-}
-}catch(e){
-message("authMessage",showError(e),"bad");
-}finally{
-busy=false;
-$("authSubmit").disabled=false;
-}
+async function act(b) {
+  if (!user) return openAuth("login");
+  if (b.is_free || (await db.rpc("has_access", { p_book: b.id })).data === true) return files(b);
+  sel = b; $("pt").textContent = b.title + " — " + money(b.price) + " " + (b.currency || "DZD"); $("pref").value = ""; say("pm", ""); $("pur").classList.add("on");
 }
 
-async function resetPassword(){
-if(!db)return message("authMessage","Supabase غير مربوط.");
-const email=$("authEmail").value.trim();
-if(!email)return message("authMessage","أدخل بريدك الإلكتروني أولاً.");
-try{
-const {error}=await db.auth.resetPasswordForEmail(email,{
-redirectTo:location.origin+location.pathname
-});
-if(error)throw error;
-message("authMessage","إذا كان البريد مسجلاً فستصلك رسالة استعادة كلمة المرور.","ok");
-}catch(e){message("authMessage",showError(e),"bad");}
+async function files(b) {
+  const { data, error } = await db.from("book_files").select("file_path,file_format,file_size").eq("book_id", b.id);
+  if (error || !data?.length) return toast(error ? error.message : "لا توجد ملفات لهذا الكتاب.");
+  $("ftitle").textContent = b.title; $("flist").innerHTML = "";
+  for (const f of data) {
+    const s = await db.storage.from("book-files").createSignedUrl(f.file_path, 600);
+    if (s.error) { toast(s.error.message); continue; }
+    const a = document.createElement("a"); a.className = "btn p"; a.style.cssText = "display:block;margin:8px 0;text-align:center";
+    a.href = s.data.signedUrl; a.target = "_blank"; a.rel = "noopener";
+    a.textContent = "فتح / تنزيل " + (f.file_format || "").toUpperCase() + (f.file_size ? " — " + (f.file_size / 1048576).toFixed(1) + " MB" : ""); $("flist").append(a);
+  }
+  $("fm").classList.add("on");
 }
 
-async function resolveRole(){
-currentRole="reader";
-currentProfile=null;
-if(!db || !currentUser)return;
-
-const p=await db.from("profiles")
-.select("id,full_name,avatar_url,role,created_at")
-.eq("id",currentUser.id).maybeSingle();
-
-if(!p.error)currentProfile=p.data;
-
-const profileRole=currentProfile?.role;
-if(["admin","author","seller"].includes(profileRole))currentRole=profileRole;
-
-const r=await db.from("user_roles")
-.select("role").eq("user_id",currentUser.id);
-
-if(!r.error){
-const roles=(r.data||[]).map(x=>x.role);
-if(roles.includes("admin"))currentRole="admin";
-else if(roles.includes("author")||roles.includes("seller"))currentRole="author";
-}
+async function buy() {
+  if (!sel) return;
+  const o = await db.from("orders").insert({ buyer_id: user.id, total_amount: 0, currency: sel.currency || "DZD", status: "pending", payment_reference: $("pref").value.trim() || null }).select("id").single();
+  if (o.error) return say("pm", o.error.message, "bad");
+  const i = await db.from("order_items").insert({ order_id: o.data.id, book_id: sel.id, seller_id: sel.seller_id, price: sel.price });
+  if (i.error) return say("pm", i.error.message, "bad");
+  say("pm", "تم إرسال الطلب رقم " + String(o.data.id).slice(0, 8) + ". أرسل الإيصال على واتساب ليتم التأكيد.", "ok"); mine();
 }
 
-function renderSignedOut(){
-currentUser=null;
-currentProfile=null;
-currentRole="reader";
-$("signedOut").classList.remove("hidden");
-$("signedIn").classList.add("hidden");
-$("authorPanel").classList.add("hidden");
-$("masterAdmin").classList.add("hidden");
+function tbl(h, rows) {
+  return rows.length ? '<div style="overflow:auto"><table><tr>' + h.map(x => "<th>" + x + "</th>").join("") + "</tr>" + rows.map(r => "<tr>" + r.map(x => "<td>" + esc(x) + "</td>").join("") + "</tr>").join("") + "</table></div>" : '<p class="msg">لا توجد بيانات.</p>';
+}
+async function mine() {
+  const o = await db.from("orders").select("id,total_amount,currency,status").eq("buyer_id", user.id).order("created_at", { ascending: false });
+  $("mo").innerHTML = tbl(["الطلب", "المبلغ", "الحالة"], (o.data || []).map(r => [String(r.id).slice(0, 8), money(r.total_amount) + " " + (r.currency || ""), r.status]));
+  if (role != "reader") {
+    const b = await db.from("books").select("title,status,is_free,price").eq("seller_id", user.id).order("created_at", { ascending: false });
+    $("mb").innerHTML = tbl(["العنوان", "الحالة", "النوع", "السعر"], (b.data || []).map(r => [r.title, r.status, r.is_free ? "مجاني" : "مدفوع", money(r.price)]));
+  }
 }
 
-function renderSignedIn(){
-$("signedOut").classList.add("hidden");
-$("signedIn").classList.remove("hidden");
-$("profileName").textContent=currentProfile?.full_name||currentUser?.user_metadata?.full_name||"عضو NIJI APORIA";
-$("profileEmail").textContent=currentUser?.email||"";
-$("profileRole").textContent=
-isAdmin()?"مدير المنصة الرئيسي — MR NIJI":
-isAuthor()?"مؤلف معتمد":"قارئ مسجل";
-$("authorPanel").classList.toggle("hidden",!isAuthor());
-$("masterAdmin").classList.toggle("hidden",!isAdmin());
+async function publish() {
+  const t = $("bt").value.trim(), d = $("bd").value.trim(), c = $("bc").value, free = $("bfree").value == "1", p = Number($("bp").value || 0), fs = [...$("bfile").files], cv = $("bcov").files[0];
+  if (!t || !fs.length) return say("bm", "أدخل العنوان واختر ملفاً واحداً على الأقل.", "bad");
+  if (!free && p <= 0) return say("bm", "أدخل سعراً للكتاب المدفوع.", "bad");
+  for (const f of fs) {
+    if (!EXTS.includes(ext(f))) return say("bm", "صيغة غير مدعومة: " + f.name + "\nالمدعوم: " + EXTS.join(", "), "bad");
+    if (f.size > MAX * 1048576) return say("bm", f.name + " أكبر من " + MAX + " ميغابايت.", "bad");
+  }
+  $("bgo").disabled = true;
+  try {
+    const up = [];
+    for (let i = 0; i < fs.length; i++) {
+      say("bm", "رفع الملف " + (i + 1) + " من " + fs.length + "...");
+      const path = user.id + "/" + Date.now() + "-" + i + "-" + Math.random().toString(36).slice(2, 7) + "." + ext(fs[i]);
+      const r = await db.storage.from("book-files").upload(path, fs[i], { contentType: fs[i].type || "application/octet-stream" });
+      if (r.error) throw r.error; up.push({ file_path: path, file_format: ext(fs[i]), file_size: fs[i].size });
+    }
+    let cp = null;
+    if (cv) { cp = user.id + "/" + Date.now() + "." + (ext(cv) || "jpg"); const r = await db.storage.from("book-covers").upload(cp, cv, { contentType: cv.type || "image/jpeg" }); if (r.error) throw r.error; }
+    const slug = (t.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "book") + "-" + Date.now().toString(36);
+    const b = await db.from("books").insert({ seller_id: user.id, category_id: c || null, title: t, slug, description: d, language: "ar", price: free ? 0 : p, currency: "DZD", cover_path: cp, status: role == "admin" ? "published" : "pending", is_free: free }).select("id").single();
+    if (b.error) throw b.error;
+    const r = await db.from("book_files").insert(up.map(u => ({ ...u, book_id: b.data.id }))); if (r.error) throw r.error;
+    say("bm", role == "admin" ? "تم نشر الكتاب." : "أُرسل الكتاب للمراجعة.", "ok");
+    ["bt", "bd", "bp", "bfile", "bcov"].forEach(i => $(i).value = ""); mine(); loadBooks(); if (role == "admin") admin();
+  } catch (e) { say("bm", "تعذر النشر: " + e.message, "bad"); }
+  $("bgo").disabled = false;
 }
 
-async function loadAccountData(){
-if(!db)return;
-const {data,error}=await db.auth.getSession();
-if(error)throw error;
-currentUser=data.session?.user||currentUser;
-if(!currentUser){renderSignedOut();return;}
-await resolveRole();
-renderSignedIn();
-await Promise.allSettled([loadMyOrders(),loadMyBooks(),loadFavorites()]);
-if(isAdmin())await loadAdminDashboard();
+function row(t, btns) {
+  const p = document.createElement("p"); p.style.margin = "10px 0"; p.append(t + " ");
+  btns.forEach(([l, c, f]) => { const b = document.createElement("button"); b.className = "btn " + c; b.style.margin = "2px"; b.textContent = l; b.onclick = async () => { const e = await f(); toast(e ? e.message : "تم"); admin(); loadBooks(); }; p.append(b); });
+  return p;
+}
+async function admin() {
+  const bx = $("ab"), ox = $("ao"), ux = $("au"); bx.innerHTML = ox.innerHTML = ux.innerHTML = "";
+  const up = (tb, id, v) => async () => (await db.from(tb).update(v).eq("id", id)).error;
+  const b = await db.from("books").select("id,title,is_free,price").eq("status", "pending");
+  (b.data || []).forEach(x => bx.append(row(x.title + " — " + (x.is_free ? "مجاني" : money(x.price)), [["نشر", "p", up("books", x.id, { status: "published" })], ["رفض", "d", up("books", x.id, { status: "rejected" })]])));
+  if (!b.data?.length) bx.innerHTML = '<p class="msg">لا توجد كتب معلّقة.</p>';
+  const o = await db.from("orders").select("id,total_amount,currency,payment_reference").eq("status", "pending");
+  (o.data || []).forEach(x => ox.append(row(String(x.id).slice(0, 8) + " — " + money(x.total_amount) + " " + (x.currency || "") + " — " + (x.payment_reference || "بدون مرجع"), [["تأكيد الدفع", "p", up("orders", x.id, { status: "paid" })], ["إلغاء", "d", up("orders", x.id, { status: "cancelled" })]])));
+  if (!o.data?.length) ox.innerHTML = '<p class="msg">لا توجد طلبات معلّقة.</p>';
+  const u = await db.from("profiles").select("id,full_name,role").order("created_at", { ascending: false }).limit(50);
+  (u.data || []).forEach(x => ux.append(row((x.full_name || String(x.id).slice(0, 8)) + " (" + x.role + ")", [["مؤلف", "p", up("profiles", x.id, { role: "author" })], ["قارئ", "d", up("profiles", x.id, { role: "reader" })]])));
 }
 
-async function signOut(){
-if(!db)return;
-try{
-const {error}=await db.auth.signOut();
-if(error)throw error;
-renderSignedOut();
-notify("تم تسجيل الخروج.");
-}catch(e){notify(showError(e));}
-}
-
-async function loadCategories(){
-if(!db)return;
-const {data,error}=await db.from("categories")
-.select("id,name,slug,is_active")
-.eq("is_active",true).order("name");
-if(error){console.warn(error);return;}
-categories=data||[];
-const select=$("newBookCategory");
-select.innerHTML='<option value="">اختر التصنيف</option>';
-categories.forEach(c=>{
-const o=document.createElement("option");
-o.value=c.id;o.textContent=c.name;select.append(o);
-});
-}
-
-async function signedUrl(bucket,path){
-const {data,error}=await db.storage.from(bucket).createSignedUrl(path,300);
-if(error)throw error;
-return data.signedUrl;
-}
-
-async function loadBooks(){
-const list=$("bookList");
-if(!db){list.innerHTML='<div class="empty">تعذر الاتصال بالمكتبة.</div>';return;}
-list.innerHTML='<div class="empty">جارٍ تحميل الكتب...</div>';
-
-const {data,error}=await db.from("books")
-.select("id,seller_id,category_id,title,slug,description,language,price,currency,cover_path,status,is_free,created_at")
-.eq("status","published")
-.order("created_at",{ascending:false});
-
-if(error){
-console.error("Books:",error);
-list.innerHTML='<div class="empty">تعذر تحميل الكتب. تحقق من سياسات القراءة في قاعدة البيانات.</div>';
-return;
-}
-books=data||[];
-renderBooks(books);
-}
-
-function renderBooks(items){
-const list=$("bookList");
-list.innerHTML="";
-$("bookEmpty").classList.toggle("hidden",items.length!==0);
-
-if(!items.length){
-list.innerHTML='<div class="empty">لا توجد كتب منشورة حالياً.</div>';
-return;
-}
-
-items.forEach(book=>{
-const card=document.createElement("article");
-card.className="book";
-
-const cover=document.createElement("div");
-cover.className="book-cover";
-cover.textContent="NIJI APORIA";
-
-if(book.cover_path){
-signedUrl(BUCKET_COVERS,book.cover_path).then(url=>{
-const img=document.createElement("img");
-img.src=url;img.alt=book.title||"غلاف الكتاب";
-cover.textContent="";cover.append(img);
-}).catch(e=>console.warn("Cover:",e));
-}
-
-const title=document.createElement("h3");
-title.textContent=book.title||"كتاب بدون عنوان";
-const desc=document.createElement("p");
-desc.textContent=book.description||"";
-const price=document.createElement("div");
-price.className="price";
-price.textContent=book.is_free?"مجاني":fmt(book.price)+" "+(book.currency||"DZD");
-const tag=document.createElement("span");
-tag.className="tag";
-tag.textContent=book.is_free?"كتاب مجاني":"كتاب مدفوع";
-
-const action=document.createElement("button");
-action.className="btn";
-action.textContent=book.is_free?"قراءة / تنزيل":"شراء الكتاب";
-action.addEventListener("click",()=>bookAction(book));
-
-const fav=document.createElement("button");
-fav.className="btn";
-fav.style.marginRight="5px";
-fav.textContent=favorites.has(book.id)?"♥ محفوظ":"♡ المفضلة";
-fav.addEventListener("click",()=>toggleFavorite(book.id));
-
-card.append(cover,title,desc,price,tag,action,fav);
-list.append(card);
-});
-}
-
-async function bookAction(book){
-if(!currentUser){openAuth();return;}
-if(book.is_free){await openBookFile(book);}
-else{
-selectedPurchaseBook=book;
-$("purchaseBookTitle").textContent=book.title+" — "+fmt(book.price)+" "+(book.currency||"DZD");
-$("paymentReference").value="";
-message("purchaseMessage","");
-$("purchaseModal").classList.add("open");
-}
-}
-
-async function openBookFile(book){
-try{
-const {data,error}=await db.from("book_files")
-.select("file_path").eq("book_id",book.id).limit(1);
-if(error)throw error;
-const path=data?.[0]?.file_path;
-if(!path){notify("لم تتم إضافة ملف لهذا الكتاب.");return;}
-const url=await signedUrl(BUCKET_FILES,path);
-window.open(url,"_blank","noopener,noreferrer");
-}catch(e){notify("تعذر فتح الكتاب: "+showError(e));}
-}
-
-async function submitPurchase(){
-if(!db||!currentUser||!selectedPurchaseBook)return;
-$("purchaseSubmit").disabled=true;
-try{
-const {data:order,error}=await db.from("orders").insert({
-buyer_id:currentUser.id,
-total_amount:selectedPurchaseBook.price,
-currency:selectedPurchaseBook.currency||"DZD",
-status:"pending",
-payment_reference:$("paymentReference").value.trim()||null
-}).select("id").single();
-if(error)throw error;
-
-const {error:itemError}=await db.from("order_items").insert({
-order_id:order.id,
-book_id:selectedPurchaseBook.id,
-seller_id:selectedPurchaseBook.seller_id,
-price:selectedPurchaseBook.price
-});
-if(itemError)throw itemError;
-
-message("purchaseMessage","تم إرسال الطلب للمراجعة. لم يتم تأكيد الدفع.","ok");
-await loadMyOrders();
-}catch(e){message("purchaseMessage",showError(e),"bad");}
-finally{$("purchaseSubmit").disabled=false;}
-}
-
-async function toggleFavorite(id){
-if(!currentUser){openAuth();return;}
-try{
-if(favorites.has(id)){
-const {error}=await db.from("favorites").delete()
-.eq("user_id",currentUser.id).eq("book_id",id);
-if(error)throw error;
-}else{
-const {error}=await db.from("favorites").insert({
-user_id:currentUser.id,book_id:id
-});
-if(error)throw error;
-}
-await loadFavorites();
-renderBooks(filteredBooks());
-}catch(e){notify(showError(e));}
-}
-
-async function loadFavorites(){
-if(!db||!currentUser)return;
-const {data,error}=await db.from("favorites")
-.select("book_id,books(id,title)")
-.eq("user_id",currentUser.id);
-if(error){$("myFavorites").textContent="تعذر تحميل المفضلة.";return;}
-favorites=new Set((data||[]).map(x=>x.book_id));
-$("myFavorites").innerHTML=(data||[]).length?
-(data||[]).map(x=>"<p>"+esc(x.books?.title||x.book_id)+"</p>").join(""):
-'<div class="empty">لا توجد كتب في المفضلة.</div>';
-}
-
-async function loadMyOrders(){
-if(!db||!currentUser)return;
-const {data,error}=await db.from("orders")
-.select("id,total_amount,status,created_at,currency")
-.eq("buyer_id",currentUser.id)
-.order("created_at",{ascending:false});
-if(error){$("myOrders").textContent="تعذر تحميل الطلبات.";return;}
-$("myOrders").innerHTML=makeTable(
-["رقم الطلب","المبلغ","الحالة","التاريخ"],
-(data||[]).map(o=>[o.id,fmt(o.total_amount)+" "+(o.currency||"DZD"),o.status,o.created_at])
-);
-}
-
-async function loadMyBooks(){
-if(!db||!currentUser)return;
-const {data,error}=await db.from("books")
-.select("id,title,status,is_free,price,created_at")
-.eq("seller_id",currentUser.id).order("created_at",{ascending:false});
-if(error){$("myBooks").textContent="تعذر تحميل كتبك.";return;}
-$("myBooks").innerHTML=makeTable(
-["العنوان","الحالة","النوع","السعر"],
-(data||[]).map(b=>[b.title,b.status,b.is_free?"مجاني":"مدفوع",fmt(b.price)+" DZD"])
-);
-}
-
-async function publishBook(){
-if(!db||!currentUser){openAuth();return;}
-if(!isAuthor()){message("authorMessage","حسابك غير معتمد كمؤلف.","bad");return;}
-
-const title=$("newBookTitle").value.trim();
-const description=$("newBookDescription").value.trim();
-const categoryId=$("newBookCategory").value;
-const isFree=$("newBookFree").value==="true";
-const price=Number($("newBookPrice").value||0);
-const file=$("newBookFile").files[0];
-const cover=$("newBookCover").files[0];
-
-if(!title||!categoryId||!file){
-message("authorMessage","أدخل العنوان والتصنيف واختر ملف الكتاب.");return;
-}
-if(!isFree&&price<=0){message("authorMessage","أدخل سعراً صحيحاً.");return;}
-if(file.size>40*1024*1024){message("authorMessage","حجم الملف أكبر من 40 ميغابايت.");return;}
-
-$("publishBook").disabled=true;
-let filePath=null;
-let coverPath=null;
-
-try{
-const ext=(file.name.split(".").pop()||"pdf").toLowerCase();
-const slug=$("newBookSlug").value.trim()||slugify(title);
-filePath=currentUser.id+"/"+Date.now()+"-"+slug+"."+ext;
-
-const {error:uploadError}=await db.storage.from(BUCKET_FILES)
-.upload(filePath,file,{upsert:false,contentType:file.type||"application/octet-stream"});
-if(uploadError)throw uploadError;
-
-if(cover){
-coverPath=currentUser.id+"/"+Date.now()+"-"+cover.name.replace(/[^\w.-]/g,"_");
-const {error:coverError}=await db.storage.from(BUCKET_COVERS)
-.upload(coverPath,cover,{upsert:false,contentType:cover.type||"image/jpeg"});
-if(coverError)throw coverError;
-}
-
-const {data:book,error:bookError}=await db.from("books").insert({
-seller_id:currentUser.id,
-category_id:categoryId,
-title,slug,description,
-language:"ar",
-price:isFree?0:price,
-currency:"DZD",
-cover_path:coverPath,
-status:"pending",
-is_free:isFree
-}).select("id").single();
-if(bookError)throw bookError;
-
-const {error:fileError}=await db.from("book_files").insert({
-book_id:book.id,
-file_path:filePath,
-file_format:ext,
-file_size:file.size
-});
-if(fileError)throw fileError;
-
-message("authorMessage","تم رفع الكتاب وإرساله للمراجعة بنجاح.","ok");
-["newBookTitle","newBookSlug","newBookDescription","newBookPrice","newBookFile","newBookCover"].forEach(id=>$(id).value="");
-await loadMyBooks();
-}catch(e){
-message("authorMessage","تعذر نشر الكتاب: "+showError(e),"bad");
-}finally{$("publishBook").disabled=false;}
-}
-
-function slugify(s){
-return String(s).toLowerCase().trim().replace(/[^\p{L}\p{N}]+/gu,"-").replace(/^-|-$/g,"")||"book-"+Date.now();
-}
-
-function makeTable(headers,rows){
-if(!rows?.length)return '<div class="empty">لا توجد بيانات.</div>';
-return '<div class="table-wrap"><table><thead><tr>'+
-headers.map(x=>"<th>"+esc(x)+"</th>").join("")+
-"</tr></thead><tbody>"+
-rows.map(row=>"<tr>"+row.map(x=>"<td>"+esc(x??"—")+"</td>").join("")+"</tr>").join("")+
-"</tbody></table></div>";
-}
-
-async function adminRead(name,columns="*"){
-const {data,error}=await db.from(name).select(columns).limit(100);
-if(error){console.warn(name,error.message);return null;}
-return data||[];
-}
-
-async function adminTable(name,columns,headers,target,mapper){
-const data=await adminRead(name,columns);
-$(target).innerHTML=data===null?
-'<div class="empty">تعذر الوصول إلى الجدول أو لا تسمح السياسات بالقراءة.</div>':
-makeTable(headers,data.map(mapper));
-return data;
-}
-
-async function loadAdminDashboard(){
-if(!db||!isAdmin())return;
-message("adminMessage","جارٍ تحميل لوحة الإدارة...");
-
-const specs=[
-["profiles","id,full_name,role,created_at", "adminUsers",["المعرف","الاسم","الدور","التاريخ"],r=>[r.id,r.full_name,r.role,r.created_at]],
-["books","id,title,seller_id,status,is_free,price,currency","adminBooks",["المعرف","العنوان","البائع","الحالة","النوع","السعر"],r=>[r.id,r.title,r.seller_id,r.status,r.is_free?"مجاني":"مدفوع",fmt(r.price)+" "+r.currency]],
-["orders","id,buyer_id,total_amount,status,payment_reference,created_at","adminOrders",["الطلب","المشتري","الإجمالي","الحالة","مرجع الدفع","التاريخ"],r=>[r.id,r.buyer_id,fmt(r.total_amount),r.status,r.payment_reference,r.created_at]],
-["author_commissions","author_id,book_id,order_id,gross_amount,commission_amount,author_amount,status","adminCommissions",["المؤلف","الكتاب","الطلب","الإجمالي","العمولة","حصة المؤلف","الحالة"],r=>[r.author_id,r.book_id,r.order_id,fmt(r.gross_amount),fmt(r.commission_amount),fmt(r.author_amount),r.status]],
-["withdrawal_requests","user_id,amount,payment_method,status,admin_note,created_at","adminWithdrawals",["المستخدم","المبلغ","الطريقة","الحالة","ملاحظة","التاريخ"],r=>[r.user_id,fmt(r.amount),r.payment_method,r.status,r.admin_note,r.created_at]],
-["seller_applications","user_id,description,status,created_at","adminApplications",["المستخدم","الطلب","الحالة","التاريخ"],r=>[r.user_id,r.description,r.status,r.created_at]],
-["platform_transactions","id,user_id,amount,type,status,created_at","adminTransactions",["المعرف","المستخدم","المبلغ","النوع","الحالة","التاريخ"],r=>[r.id,r.user_id,fmt(r.amount),r.type,r.status,r.created_at]],
-["platform_settings","*","adminSettings",["البيانات"],r=>[JSON.stringify(r)]],
-["admin_audit_logs","*","adminAudit",["البيانات"],r=>[JSON.stringify(r)]]
-];
-
-const results=await Promise.all(specs.map(s=>adminTable(...s)));
-const [profiles,bookRows,orders,commissions,withdrawals,applications]=results;
-const stats=[
-["الكتب",bookRows?.length??"—"],
-["الطلبات",orders?.length??"—"],
-["طلبات المؤلفين",applications?.length??"—"],
-["السحوبات",withdrawals?.length??"—"]
-];
-$("adminStats").innerHTML=stats.map(s=>'<div class="stat"><small>'+s[0]+'</small><strong>'+s[1]+'</strong></div>').join("");
-$("overviewData").innerHTML=makeTable(["المؤشر","العدد"],[
-["المستخدمون",profiles?.length??"غير متاح"],
-["الكتب",bookRows?.length??"غير متاح"],
-["الطلبات",orders?.length??"غير متاح"],
-["العمولات",commissions?.length??"غير متاح"]
-]);
-message("adminMessage","تم تحديث بيانات لوحة الإدارة.");
-}
-
-function setupEvents(){
-$("authOpen").addEventListener("click",()=>openAuth());
-$("accountAuth").addEventListener("click",()=>openAuth());
-$("authClose").addEventListener("click",closeAuth);
-$("authSubmit").addEventListener("click",submitAuth);
-$("authToggle").addEventListener("click",()=>openAuth(authMode==="login"?"register":"login"));
-$("resetPassword").addEventListener("click",resetPassword);
-$("signOut").addEventListener("click",signOut);
-$("refreshAccount").addEventListener("click",()=>loadAccountData().then(()=>notify("تم تحديث الحساب.")).catch(e=>notify(showError(e))));
-$("publishBook").addEventListener("click",publishBook);
-$("purchaseSubmit").addEventListener("click",submitPurchase);
-$("purchaseClose").addEventListener("click",()=>$("purchaseModal").classList.remove("open"));
-$("menuButton").addEventListener("click",()=>$("mainNav").classList.toggle("show"));
-
-$("adminNav").addEventListener("click",e=>{
-const btn=e.target.closest("button[data-pane]");
-if(!btn)return;
-document.querySelectorAll(".admin-nav button").forEach(x=>x.classList.toggle("active",x===btn));
-document.querySelectorAll(".admin-pane").forEach(x=>x.classList.toggle("active",x.id==="pane-"+btn.dataset.pane));
-});
-
-$("bookSearch").addEventListener("input",()=>renderBooks(filteredBooks()));
-$("bookFilter").addEventListener("change",()=>renderBooks(filteredBooks()));
-
-$("searchInput").addEventListener("input",filterArticles);
-$("categoryFilter").addEventListener("change",filterArticles);
-
-$("authModal").addEventListener("click",e=>{if(e.target===$("authModal"))closeAuth();});
-$("purchaseModal").addEventListener("click",e=>{if(e.target===$("purchaseModal"))$("purchaseModal").classList.remove("open");});
-}
-
-function filteredBooks(){
-const q=$("bookSearch").value.trim().toLowerCase();
-const filter=$("bookFilter").value;
-return books.filter(b=>{
-const match=(b.title||"").toLowerCase().includes(q)||(b.description||"").toLowerCase().includes(q);
-const type=!filter||(filter==="free"?b.is_free:!b.is_free);
-return match&&type;
-});
-}
-
-function filterArticles(){
-const q=$("searchInput").value.trim().toLowerCase();
-const cat=$("categoryFilter").value;
-let count=0;
-document.querySelectorAll(".article").forEach(a=>{
-const ok=a.textContent.toLowerCase().includes(q)&&(!cat||a.dataset.category===cat);
-a.classList.toggle("hidden",!ok);
-if(ok)count++;
-});
-$("articleEmpty").classList.toggle("hidden",count!==0);
-}
-
-async function start(){
-$("year").textContent=new Date().getFullYear();
-initSupabase();
-setupEvents();
-
-if(!db){
-$("bookList").innerHTML='<div class="empty">تعذر الاتصال بقاعدة البيانات. راجع config.js.</div>';
-return;
-}
-
-await Promise.allSettled([loadCategories(),loadBooks()]);
-
-try{
-const {data,error}=await db.auth.getSession();
-if(error)throw error;
-currentUser=data.session?.user||null;
-if(currentUser)await loadAccountData();
-else renderSignedOut();
-}catch(e){
-console.error("Session:",e);
-renderSignedOut();
-}
-
-db.auth.onAuthStateChange((event,session)=>{
-if(event==="INITIAL_SESSION")return;
-if(session?.user){
-currentUser=session.user;
-setTimeout(()=>loadAccountData().catch(e=>console.error(e)),0);
-}else if(event==="SIGNED_OUT"){
-renderSignedOut();
-}
-});
-}
-
-if(document.readyState==="loading"){
-document.addEventListener("DOMContentLoaded",start,{once:true});
-}else{
-start();
-}
+(async () => {
+  $("yr").textContent = new Date().getFullYear(); $("payno").textContent = PAY;
+  try { db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch (e) { db = null; }
+  if (!db || SUPABASE_URL.startsWith("PUT")) { db = SUPABASE_URL.startsWith("PUT") ? null : db; }
+  if (!db) { $("bl").innerHTML = '<div class="card">أدخل SUPABASE_URL و SUPABASE_KEY في أول سكربت الملف.</div>'; return; }
+  const c = await db.from("categories").select("id,name").eq("is_active", true).order("name");
+  (c.data || []).forEach(x => { const o = document.createElement("option"); o.value = x.id; o.textContent = x.name; $("bc").append(o); });
+  await loadBooks(); await me();
+  db.auth.onAuthStateChange((ev) => {
+    if (ev == "PASSWORD_RECOVERY") { const p = prompt("اكتب كلمة المرور الجديدة (6 أحرف على الأقل):"); if (p && p.length >= 6) db.auth.updateUser({ password: p }).then(r => toast(r.error ? r.error.message : "تم تغيير كلمة المرور")); }
+    else if (ev == "SIGNED_IN" || ev == "SIGNED_OUT") setTimeout(me, 0);
+  });
 })();
 </script>
 </body>
