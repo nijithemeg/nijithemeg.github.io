@@ -53,7 +53,7 @@ footer{border-top:1px solid var(--l);padding:36px 0;text-align:center;color:var(
 </head>
 <body>
 <header><div class="w">
-<div class="nav"><a class="logo" href="#home">NIJI APORIA</a><button class="btn" onclick="openAuth('login')">الدخول / التسجيل</button></div>
+<div class="nav"><a class="logo" href="#home">NIJI APORIA <small style="font:10px Cairo;color:var(--m);letter-spacing:0">v5</small></a><button class="btn" onclick="openAuth('login')">الدخول / التسجيل</button></div>
 <nav><a href="#home">الرئيسية</a><a href="#domains">المعرفة</a><a href="#library">المكتبة</a><a href="#account">حسابي</a><a href="#about">عن المشروع</a></nav>
 </div></header>
 
@@ -85,6 +85,13 @@ footer{border-top:1px solid var(--l);padding:36px 0;text-align:center;color:var(
 <div class="panel hide" id="in"><h3 id="pn"></h3><p id="pe" class="msg"></p><p id="pr" style="color:var(--g)"></p>
 <div style="margin-top:10px"><button class="btn d" onclick="out()">تسجيل الخروج</button> <a class="btn" target="_blank" rel="noopener" href="https://wa.me/213558444691?text=%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%A7%D9%86%D8%B6%D9%85%D8%A7%D9%85%20%D9%83%D9%85%D8%A4%D9%84%D9%81">طلب أن أصبح مؤلفاً</a></div></div>
 
+<div class="panel hide" id="walletBox"><h3>محفظتي</h3>
+<p style="font-size:26px;color:var(--g2);font-weight:700;margin:4px 0"><span id="wbal">0</span> دج</p>
+<p class="msg">لشحن المحفظة: حوّل المبلغ عبر بريدي موب إلى حساب CCP رقم <b id="payno2"></b> ثم اكتب المبلغ ورقم العملية هنا. تُضاف الأموال بعد اعتماد الإدارة، وبعدها تشتري الكتب فوراً وتنزّلها في أي وقت.</p>
+<input id="tamt" type="number" min="100" placeholder="المبلغ بالدينار (100 فأكثر)"><input id="tref" placeholder="رقم العملية / مرجع التحويل / اسم المُحوِّل">
+<button class="btn p" onclick="topup()">إرسال طلب الشحن</button><p id="tm" class="msg"></p>
+<h3 style="margin-top:14px">سجل المحفظة</h3><div id="wtx"></div></div>
+
 <div class="panel hide" id="authorBox"><h3>نشر كتاب</h3>
 <input id="bt" placeholder="عنوان الكتاب"><textarea id="bd" rows="3" placeholder="وصف الكتاب"></textarea>
 <select id="bc"><option value="">التصنيف (اختياري)</option></select>
@@ -109,7 +116,7 @@ footer{border-top:1px solid var(--l);padding:36px 0;text-align:center;color:var(
 <p style="color:var(--g);letter-spacing:3px;direction:ltr;margin-top:8px">THE ART OF QUESTIONING.</p></div></div></section>
 
 <footer><div class="w"><div class="logo" style="display:inline-block">NIJI APORIA</div><p>NO IDENTITY JUST INFINITY</p>
-<p><a href="mailto:niji01@gmail.com">niji01@gmail.com</a> · <a href="https://wa.me/213558444691" target="_blank" rel="noopener">WhatsApp +213558444691</a></p><p>© <span id="yr"></span> NIJI APORIA · v4</p></div></footer>
+<p><a href="mailto:niji01@gmail.com">niji01@gmail.com</a> · <a href="https://wa.me/213558444691" target="_blank" rel="noopener">WhatsApp +213558444691</a></p><p>© <span id="yr"></span> NIJI APORIA · v5</p></div></footer>
 
 <div class="modal" id="auth" onclick="if(event.target===this)this.classList.remove('on')"><div class="box">
 <button class="btn" onclick="this.closest('.modal').classList.remove('on')">إغلاق ×</button>
@@ -126,6 +133,7 @@ footer{border-top:1px solid var(--l);padding:36px 0;text-align:center;color:var(
 <input id="cq" type="number" min="1" max="10" value="1" placeholder="الكمية">
 <select id="cm"><option value="cod">الدفع عند الاستلام</option><option value="manual">تحويل مسبق CCP / بريدي موب</option></select></div>
 <p id="pnote" class="msg">للدفع اليدوي: حوّل المبلغ إلى CCP / بريدي موب رقم <b id="payno"></b> ثم أرسل الإيصال على واتساب <a style="color:var(--g)" href="https://wa.me/213558444691" target="_blank" rel="noopener">+213558444691</a>. الكتاب الرقمي يفتح في حسابك بعد تأكيد الدفع.</p>
+<div id="wbtn" class="hide"><button class="btn p" style="width:100%;margin:8px 0" onclick="payWallet()">الدفع من محفظتي (فوري)</button><p class="msg" id="wmsg"></p></div>
 <input id="pref" placeholder="مرجع الدفع إن وجد"><button class="btn p" onclick="buy()">إرسال الطلب</button><p id="pm" class="msg"></p></div></div>
 
 <div class="modal" id="fm" onclick="if(event.target===this)this.classList.remove('on')"><div class="box">
@@ -195,8 +203,8 @@ async function me() {
   }
   $("out").classList.toggle("hide", !!user); $("in").classList.toggle("hide", !user);
   $("authorBox").classList.toggle("hide", !(user && role != "reader"));
-  $("adminBox").classList.toggle("hide", role != "admin"); $("myOrders").classList.toggle("hide", !user);
-  if (user) { mine(); if (role == "admin") admin(); }
+  $("adminBox").classList.toggle("hide", role != "admin"); $("myOrders").classList.toggle("hide", !user); $("walletBox").classList.toggle("hide", !user);
+  if (user) { mine(); wallet(); if (role == "admin") admin(); }
   draw();
 }
 
@@ -206,8 +214,8 @@ async function loadBooks() {
   books = data || []; draw();
 }
 
-const ST = { pending: "قيد المراجعة", paid: "مدفوع", shipped: "تم الشحن", delivered: "تم التسليم", cancelled: "ملغى", published: "منشور", rejected: "مرفوض" };
-const TABS = [["ov", "نظرة عامة"], ["bk", "الكتب"], ["od", "الطلبات"], ["us", "المستخدمون"], ["ct", "التصنيفات"]];
+const ST = { pending: "قيد المراجعة", paid: "مدفوع", shipped: "تم الشحن", delivered: "تم التسليم", cancelled: "ملغى", published: "منشور", rejected: "مرفوض", approved: "تمت الموافقة" };
+const TABS = [["ov", "نظرة عامة"], ["bk", "الكتب"], ["od", "الطلبات"], ["tp", "الشحن"], ["us", "المستخدمون"], ["ct", "التصنيفات"]];
 let tab = "ov";
 const isPh = b => b.book_type == "physical";
 
@@ -227,16 +235,50 @@ function draw() {
 }
 
 async function act(b) {
-  if (!user) return openAuth("login");
-  sel = b; say("pm", "");
+  sel = b; say("pm", ""); $("wbtn").classList.add("hide");
   if (isPh(b)) {
+    if (!user) return openAuth("login");
     $("phys").classList.remove("hide"); $("pref").classList.add("hide"); $("pnote").classList.remove("hide");
     $("pth").textContent = "طلب كتاب مطبوع"; $("pt").textContent = b.title + " — " + money(b.price) + " " + (b.currency || "DZD") + " + توصيل " + money(b.delivery_fee);
     return $("pur").classList.add("on");
   }
-  if (b.is_free || (await db.rpc("has_access", { p_book: b.id })).data === true) return files(b);
+  if (b.is_free) return files(b);
+  if (!user) return openAuth("login");
+  if ((await db.rpc("has_access", { p_book: b.id })).data === true) return files(b);
+  const w = await balance();
   $("phys").classList.add("hide"); $("pref").classList.remove("hide"); $("pnote").classList.remove("hide"); $("pref").value = "";
-  $("pth").textContent = "طلب شراء كتاب رقمي"; $("pt").textContent = b.title + " — " + money(b.price) + " " + (b.currency || "DZD"); $("pur").classList.add("on");
+  $("wbtn").classList.remove("hide"); $("wmsg").textContent = "رصيد محفظتك: " + money(w) + " دج" + (w < Number(b.price) ? " — غير كافٍ، اشحن محفظتك من قسم «حسابي»." : "");
+  $("pth").textContent = "شراء كتاب رقمي"; $("pt").textContent = b.title + " — " + money(b.price) + " " + (b.currency || "DZD"); $("pur").classList.add("on");
+}
+
+async function balance() {
+  if (!user) return 0;
+  const r = await db.from("wallets").select("balance").eq("user_id", user.id).maybeSingle();
+  return Number(r.data?.balance || 0);
+}
+async function payWallet() {
+  if (!sel || !user) return;
+  const r = await db.rpc("buy_with_wallet", { p_book: sel.id });
+  if (r.error) return say("pm", r.error.message, "bad");
+  $("pur").classList.remove("on"); toast("تم الشراء بنجاح، يمكنك القراءة أو التنزيل الآن."); wallet(); mine(); files(sel);
+}
+async function topup() {
+  const a = Number($("tamt").value);
+  if (!a || a < 100) return say("tm", "أدخل مبلغاً (100 دج على الأقل).", "bad");
+  const r = await db.rpc("request_topup", { p_amount: a, p_ref: $("tref").value });
+  if (r.error) return say("tm", r.error.message, "bad");
+  say("tm", "تم إرسال طلب الشحن. تُضاف الأموال بعد اعتماد الإدارة.", "ok"); $("tamt").value = ""; $("tref").value = ""; wallet();
+}
+async function wallet() {
+  if (!user) return;
+  $("wbal").textContent = money(await balance());
+  const [t, x] = await Promise.all([
+    db.from("topups").select("amount,status,created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(10),
+    db.from("wallet_tx").select("amount,kind,note,created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(15)]);
+  const d = v => new Date(v).toLocaleDateString("ar-DZ");
+  const rows = [...(t.data || []).filter(r => r.status != "approved").map(r => [d(r.created_at), "طلب شحن " + money(r.amount) + " دج", ST[r.status] || r.status]),
+    ...(x.data || []).map(r => [d(r.created_at), (r.note || r.kind) + " (" + (r.amount > 0 ? "+" : "") + money(r.amount) + ")", "تم"])];
+  $("wtx").innerHTML = tbl(["التاريخ", "العملية", "الحالة"], rows);
 }
 
 async function files(b) {
@@ -255,4 +297,152 @@ async function files(b) {
 
 async function buy() {
   if (!sel) return; const ph = isPh(sel);
-  const row = { buyer_id: user.id, total_amount: 0, currency: sel.currency || "DZD", statu
+  const row = { buyer_id: user.id, total_amount: 0, currency: sel.currency || "DZD", status: "pending", payment_reference: $("pref").value.trim() || null, order_type: ph ? "physical" : "digital", payment_method: ph ? $("cm").value : "manual" };
+  let q = 1;
+  if (ph) {
+    row.customer_name = $("cn").value.trim(); row.customer_phone = $("cp").value.trim(); row.wilaya = $("cw").value.trim(); row.address = $("ca").value.trim();
+    q = Math.max(1, Math.min(10, parseInt($("cq").value) || 1));
+    if (!row.customer_name || !row.customer_phone || !row.wilaya || !row.address) return say("pm", "أكمل بيانات التوصيل كلها.", "bad");
+  }
+  const o = await db.from("orders").insert(row).select("id").single();
+  if (o.error) return say("pm", o.error.message, "bad");
+  const i = await db.from("order_items").insert({ order_id: o.data.id, book_id: sel.id, seller_id: sel.seller_id, price: sel.price, quantity: q });
+  if (i.error) return say("pm", i.error.message, "bad");
+  say("pm", "تم إرسال الطلب رقم " + String(o.data.id).slice(0, 8) + (ph ? ". سنتواصل معك لتأكيد التوصيل." : ". أرسل الإيصال على واتساب ليتم التأكيد."), "ok"); mine();
+}
+
+function tbl(h, rows) {
+  return rows.length ? '<div style="overflow:auto"><table><tr>' + h.map(x => "<th>" + x + "</th>").join("") + "</tr>" + rows.map(r => "<tr>" + r.map(x => "<td>" + esc(x) + "</td>").join("") + "</tr>").join("") + "</table></div>" : '<p class="msg">لا توجد بيانات.</p>';
+}
+async function mine() {
+  const o = await db.from("orders").select("id,total_amount,currency,status,order_type").eq("buyer_id", user.id).order("created_at", { ascending: false });
+  $("mo").innerHTML = tbl(["الطلب", "النوع", "المبلغ", "الحالة"], (o.data || []).map(r => [String(r.id).slice(0, 8), r.order_type == "physical" ? "مطبوع" : "رقمي", money(r.total_amount) + " " + (r.currency || ""), ST[r.status] || r.status]));
+  if (role != "reader") {
+    const b = await db.from("books").select("title,status,is_free,price,book_type,stock").eq("seller_id", user.id).order("created_at", { ascending: false });
+    $("mb").innerHTML = tbl(["العنوان", "النوع", "الحالة", "السعر", "المخزون"], (b.data || []).map(r => [r.title, r.book_type == "physical" ? "مطبوع" : "رقمي", ST[r.status] || r.status, r.is_free ? "مجاني" : money(r.price), r.book_type == "physical" ? (r.stock ?? "—") : "—"]));
+  }
+}
+
+function typ() { const ph = $("btype").value == "physical"; $("physf").classList.toggle("hide", !ph); $("digf").classList.toggle("hide", ph); if (ph) $("bfree").value = "0"; }
+
+async function publish() {
+  const t = $("bt").value.trim(), d = $("bd").value.trim(), c = $("bc").value, ph = $("btype").value == "physical", free = !ph && $("bfree").value == "1", p = Number($("bp").value || 0), fs = ph ? [] : [...$("bfile").files], cv = $("bcov").files[0];
+  if (!t) return say("bm", "أدخل عنوان الكتاب.", "bad");
+  if (!ph && !fs.length) return say("bm", "اختر ملفاً واحداً على الأقل للكتاب الرقمي.", "bad");
+  if (!free && p <= 0) return say("bm", "أدخل سعراً للكتاب.", "bad");
+  for (const f of fs) {
+    if (!EXTS.includes(ext(f))) return say("bm", "صيغة غير مدعومة: " + f.name + "\nالمدعوم: " + EXTS.join(", "), "bad");
+    if (f.size > MAX * 1048576) return say("bm", f.name + " أكبر من " + MAX + " ميغابايت.", "bad");
+  }
+  $("bgo").disabled = true;
+  try {
+    const up = [];
+    for (let i = 0; i < fs.length; i++) {
+      say("bm", "رفع الملف " + (i + 1) + " من " + fs.length + "...");
+      const path = user.id + "/" + Date.now() + "-" + i + "-" + Math.random().toString(36).slice(2, 7) + "." + ext(fs[i]);
+      const r = await db.storage.from("book-files").upload(path, fs[i], { contentType: fs[i].type || "application/octet-stream" });
+      if (r.error) throw r.error; up.push({ file_path: path, file_format: ext(fs[i]), file_size: fs[i].size });
+    }
+    let cp = null;
+    if (cv) { cp = user.id + "/" + Date.now() + "." + (ext(cv) || "jpg"); const r = await db.storage.from("book-covers").upload(cp, cv, { contentType: cv.type || "image/jpeg" }); if (r.error) throw r.error; }
+    const slug = (t.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "book") + "-" + Date.now().toString(36);
+    const b = await db.from("books").insert({ seller_id: user.id, category_id: c || null, title: t, slug, description: d, language: "ar", price: free ? 0 : p, currency: "DZD", cover_path: cp, status: role == "admin" ? "published" : "pending", is_free: free, book_type: ph ? "physical" : "digital", stock: ph ? parseInt($("bstock").value || 0) : null, delivery_fee: ph ? Number($("bship").value || 0) : 0 }).select("id").single();
+    if (b.error) throw b.error;
+    if (up.length) { const r = await db.from("book_files").insert(up.map(u => ({ ...u, book_id: b.data.id }))); if (r.error) throw r.error; }
+    say("bm", role == "admin" ? "تم نشر الكتاب." : "أُرسل الكتاب للمراجعة.", "ok");
+    ["bt", "bd", "bp", "bfile", "bcov", "bstock", "bship"].forEach(i => $(i).value = ""); mine(); loadBooks(); if (role == "admin") admin();
+  } catch (e) { say("bm", "تعذر النشر: " + e.message, "bad"); }
+  $("bgo").disabled = false;
+}
+
+async function admin(t) {
+  if (t) tab = t;
+  const T = $("atabs"); T.innerHTML = "";
+  TABS.forEach(([k, l]) => { const b = document.createElement("button"); b.className = "btn" + (k == tab ? " p" : ""); b.textContent = l; b.onclick = () => admin(k); T.append(b); });
+  const [u, b, o, it, c, tp, wl] = await Promise.all([
+    db.from("profiles").select("id,full_name,role,created_at").order("created_at", { ascending: false }).limit(500),
+    db.from("books").select("id,seller_id,title,status,book_type,is_free,price,stock,delivery_fee").order("created_at", { ascending: false }).limit(500),
+    db.from("orders").select("*").order("created_at", { ascending: false }).limit(500),
+    db.from("order_items").select("order_id,book_id,quantity").limit(3000),
+    db.from("categories").select("id,name,is_active").order("name"),
+    db.from("topups").select("*").order("created_at", { ascending: false }).limit(200), db.from("wallets").select("user_id,balance")]);
+  const U = u.data || [], B = b.data || [], O = o.data || [], I = it.data || [], C = c.data || [], TP = tp.data || [], W = {}; (wl.data || []).forEach(x => W[x.user_id] = Number(x.balance));
+  const nm = {}, bt = {}; U.forEach(x => nm[x.id] = x.full_name || String(x.id).slice(0, 8)); B.forEach(x => bt[x.id] = x);
+  const A = $("adm"); A.innerHTML = "";
+  const card = h => { const d = document.createElement("div"); d.className = "card"; d.style.marginTop = "10px"; d.innerHTML = h; A.append(d); return d; };
+  const btn = (d, l, c, f) => { const x = document.createElement("button"); x.className = "btn " + c; x.style.margin = "3px"; x.textContent = l; x.onclick = f; d.append(x); };
+  const upd = (tb, id, v) => async () => { const r = await db.from(tb).update(v).eq("id", id); toast(r.error ? r.error.message : "تم"); admin(); loadBooks(); };
+  if (tab == "ov") {
+    const rev = O.filter(x => ["paid", "shipped", "delivered"].includes(x.status)).reduce((s, x) => s + Number(x.total_amount || 0), 0);
+    const S = [["المستخدمون", U.length], ["المؤلفون", U.filter(x => ["author", "seller"].includes(x.role)).length], ["كتب منشورة", B.filter(x => x.status == "published").length], ["كتب بانتظار المراجعة", B.filter(x => x.status == "pending").length], ["كتب رقمية", B.filter(x => x.book_type != "physical").length], ["كتب مطبوعة", B.filter(x => x.book_type == "physical").length], ["طلبات بانتظار التأكيد", O.filter(x => x.status == "pending").length], ["مطبوعات للشحن", O.filter(x => x.status == "paid" && x.order_type == "physical").length], ["إجمالي الطلبات", O.length], ["طلبات شحن معلّقة", TP.filter(x => x.status == "pending").length], ["أرصدة المحافظ (دج)", money(Object.values(W).reduce((a, x) => a + x, 0))], ["مبيعات المحفظة (دج)", money(O.filter(x => x.payment_method == "wallet").reduce((a, x) => a + Number(x.total_amount || 0), 0))], ["الإيرادات المؤكدة (دج)", money(rev)]];
+    A.innerHTML = '<div class="grid" style="margin-top:10px">' + S.map(s => '<div class="card"><p class="msg">' + s[0] + '</p><h3 style="font-size:24px;margin:0">' + s[1] + "</h3></div>").join("") + "</div>";
+  }
+  if (tab == "bk") { if (!B.length) A.innerHTML = '<p class="msg">لا توجد كتب.</p>';
+    B.forEach(x => { const d = card("<h3>" + esc(x.title) + '</h3><p class="msg">' + (x.book_type == "physical" ? "مطبوع — مخزون: " + (x.stock ?? "—") + " — توصيل: " + money(x.delivery_fee) : "رقمي") + " · " + (x.is_free ? "مجاني" : money(x.price) + " دج") + " · المؤلف: " + esc(nm[x.seller_id] || "—") + " · الحالة: " + (ST[x.status] || x.status) + "</p>");
+      if (x.status != "published") btn(d, "نشر", "p", upd("books", x.id, { status: "published" }));
+      if (x.status != "rejected") btn(d, "رفض", "d", upd("books", x.id, { status: "rejected" }));
+      btn(d, "حذف", "d", async () => { if (confirm("حذف الكتاب نهائياً؟")) { const r = await db.from("books").delete().eq("id", x.id); toast(r.error ? r.error.message : "تم الحذف"); admin(); loadBooks(); } }); }); }
+  if (tab == "od") { if (!O.length) A.innerHTML = '<p class="msg">لا توجد طلبات.</p>';
+    O.forEach(x => {
+      const its = I.filter(i => i.order_id == x.id).map(i => (bt[i.book_id]?.title || "كتاب") + " ×" + (i.quantity || 1)).join("، "), ph = x.order_type == "physical";
+      const d = card("<h3>#" + String(x.id).slice(0, 8) + " — " + money(x.total_amount) + ' دج</h3><p class="msg">' + esc(its) + "<br>المشتري: " + esc(nm[x.buyer_id] || "—") + " · " + (ph ? "مطبوع" : "رقمي") + " · الدفع: " + ({ cod: "عند الاستلام", wallet: "المحفظة", manual: "تحويل يدوي" }[x.payment_method] || "تحويل يدوي") + (x.payment_reference ? " · المرجع: " + esc(x.payment_reference) : "") + (ph ? "<br>" + esc(x.customer_name) + " — " + esc(x.customer_phone) + " — " + esc(x.wilaya) + " — " + esc(x.address) : "") + "<br>" + new Date(x.created_at).toLocaleString("ar-DZ") + "</p>");
+      const s = document.createElement("select");
+      ["pending", "paid", "shipped", "delivered", "cancelled"].forEach(k => { const e = document.createElement("option"); e.value = k; e.textContent = ST[k]; if (k == x.status) e.selected = true; s.append(e); }); d.append(s);
+      btn(d, "حفظ الحالة", "p", async () => { const r = await db.from("orders").update({ status: s.value }).eq("id", x.id); toast(r.error ? r.error.message : "تم تحديث الحالة"); admin(); });
+      if (ph && x.customer_phone) { const a = document.createElement("a"); a.className = "btn"; a.target = "_blank"; a.rel = "noopener"; a.style.margin = "3px"; a.href = "https://wa.me/" + x.customer_phone.replace(/\D/g, "").replace(/^0/, "213"); a.textContent = "مراسلة العميل"; d.append(a); }
+    }); }
+  if (tab == "tp") { if (!TP.length) A.innerHTML = '<p class="msg">لا توجد طلبات شحن.</p>';
+    TP.forEach(x => { const d = card("<h3>" + money(x.amount) + " دج — " + esc(nm[x.user_id] || "—") + '</h3><p class="msg">المرجع: ' + esc(x.reference || "—") + " · " + new Date(x.created_at).toLocaleString("ar-DZ") + " · الحالة: " + (ST[x.status] || x.status) + "</p>");
+      if (x.status == "pending") {
+        btn(d, "اعتماد وإضافة الرصيد", "p", async () => { const r = await db.rpc("approve_topup", { p_id: x.id }); toast(r.error ? r.error.message : "تمت إضافة الرصيد"); admin(); });
+        btn(d, "رفض", "d", async () => { const r = await db.rpc("reject_topup", { p_id: x.id }); toast(r.error ? r.error.message : "تم الرفض"); admin(); });
+      } }); }
+  if (tab == "us") U.forEach(x => { const d = card("<h3>" + esc(x.full_name || String(x.id).slice(0, 8)) + '</h3><p class="msg">الدور: ' + x.role + " · طلباته: " + O.filter(y => y.buyer_id == x.id).length + " · كتبه: " + B.filter(y => y.seller_id == x.id).length + " · رصيده: " + money(W[x.id] || 0) + " دج</p>");
+    btn(d, "شحن/خصم يدوي", "", async () => { const a = prompt("المبلغ (موجب للإضافة، سالب للخصم):"); if (!a || isNaN(a)) return; const r = await db.rpc("admin_adjust", { p_user: x.id, p_amount: Number(a), p_note: "تعديل من الإدارة" }); toast(r.error ? r.error.message : "تم"); admin(); });
+    if (x.role == "admin") return; btn(d, "مؤلف", "p", upd("profiles", x.id, { role: "author" })); btn(d, "قارئ", "d", upd("profiles", x.id, { role: "reader" })); });
+  if (tab == "ct") {
+    const d = card("<h3>إضافة تصنيف</h3>"); const i = document.createElement("input"); i.placeholder = "اسم التصنيف"; d.append(i);
+    btn(d, "إضافة", "p", async () => { const n = i.value.trim(); if (!n) return; const r = await db.from("categories").insert({ name: n, slug: n.toLowerCase().replace(/\s+/g, "-") + "-" + Date.now().toString(36) }); toast(r.error ? r.error.message : "تمت الإضافة"); admin(); });
+    C.forEach(x => { const e = card("<h3>" + esc(x.name) + '</h3><p class="msg">' + (x.is_active ? "مفعّل" : "معطّل") + "</p>"); btn(e, x.is_active ? "تعطيل" : "تفعيل", "", upd("categories", x.id, { is_active: !x.is_active })); });
+  }
+}
+
+let pdf = null, pg = 1, sc = 1, rb = false;
+async function readPdf(url) {
+  try {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    $("fm").classList.remove("on"); $("rd").classList.add("on"); $("rpg").textContent = "جارٍ التحميل...";
+    pdf = await pdfjsLib.getDocument({ url }).promise; pg = 1; sc = 1; await showPg();
+  } catch (e) { $("rd").classList.remove("on"); toast("تعذر فتح القارئ: " + e.message + " — استخدم زر التنزيل."); }
+}
+async function showPg() {
+  if (rb || !pdf) return; rb = true;
+  try {
+    const p = await pdf.getPage(pg), w = $("rcv").clientWidth - 10, v0 = p.getViewport({ scale: 1 });
+    const v = p.getViewport({ scale: (w / v0.width) * sc }), c = $("cv"), r = window.devicePixelRatio || 1;
+    c.width = v.width * r; c.height = v.height * r; c.style.width = v.width + "px"; c.style.height = v.height + "px";
+    await p.render({ canvasContext: c.getContext("2d"), viewport: v, transform: r != 1 ? [r, 0, 0, r, 0, 0] : null }).promise;
+    $("rpg").textContent = pg + " / " + pdf.numPages; $("rcv").scrollTop = 0;
+  } catch (e) { toast("خطأ في عرض الصفحة: " + e.message); }
+  rb = false;
+}
+function goPg(d) { if (!pdf) return; const n = pg + d; if (n < 1 || n > pdf.numPages) return; pg = n; showPg(); }
+function zoom(d) { sc = Math.max(0.6, Math.min(3, sc + d)); showPg(); }
+function closeRd() { $("rd").classList.remove("on"); pdf = null; }
+
+(async () => {
+  $("yr").textContent = new Date().getFullYear(); $("payno").textContent = PAY; $("payno2").textContent = PAY;
+  try { db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch (e) { db = null; }
+  if (!db || SUPABASE_URL.startsWith("PUT")) { db = SUPABASE_URL.startsWith("PUT") ? null : db; }
+  if (!db) { $("bl").innerHTML = '<div class="card">أدخل SUPABASE_URL و SUPABASE_KEY في أول سكربت الملف.</div>'; return; }
+  const c = await db.from("categories").select("id,name").eq("is_active", true).order("name");
+  (c.data || []).forEach(x => { const o = document.createElement("option"); o.value = x.id; o.textContent = x.name; $("bc").append(o); });
+  if (c.error) toast("تنبيه: تعذر الاتصال بقاعدة البيانات — " + c.error.message); await loadBooks(); await me();
+  db.auth.onAuthStateChange((ev) => {
+    if (ev == "PASSWORD_RECOVERY") { const p = prompt("اكتب كلمة المرور الجديدة (6 أحرف على الأقل):"); if (p && p.length >= 6) db.auth.updateUser({ password: p }).then(r => toast(r.error ? r.error.message : "تم تغيير كلمة المرور")); }
+    else if (ev == "SIGNED_IN" || ev == "SIGNED_OUT") setTimeout(me, 0);
+  });
+})();
+</script>
+</body>
+</html>
