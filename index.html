@@ -87,10 +87,12 @@ footer{border-top:1px solid var(--l);padding:36px 0;text-align:center;color:var(
 <div class="panel hide" id="authorBox"><h3>نشر كتاب</h3>
 <input id="bt" placeholder="عنوان الكتاب"><textarea id="bd" rows="3" placeholder="وصف الكتاب"></textarea>
 <select id="bc"><option value="">التصنيف (اختياري)</option></select>
+<select id="btype" onchange="typ()"><option value="digital">كتاب رقمي (ملفات PDF وغيرها)</option><option value="physical">كتاب مطبوع (توصيل للمنازل)</option></select>
+<div id="physf" class="hide"><input id="bstock" type="number" min="0" placeholder="الكمية المتوفرة"><input id="bship" type="number" min="0" placeholder="سعر التوصيل بالدينار"></div>
 <select id="bfree"><option value="1">مجاني</option><option value="0">مدفوع</option></select>
 <input id="bp" type="number" min="0" placeholder="السعر بالدينار (للمدفوع)">
 <p class="msg">ملفات الكتاب (يمكن اختيار عدة صيغ معاً: PDF, EPUB, MOBI, DOCX, TXT, ZIP, MP3...)</p>
-<input id="bfile" type="file" multiple>
+<div id="digf"><input id="bfile" type="file" multiple></div>
 <p class="msg">غلاف الكتاب (اختياري)</p><input id="bcov" type="file" accept="image/*">
 <button class="btn p" id="bgo" onclick="publish()">نشر / إرسال للمراجعة</button><p id="bm" class="msg"></p>
 <h3 style="margin-top:14px">كتبي</h3><div id="mb"></div></div>
@@ -98,9 +100,7 @@ footer{border-top:1px solid var(--l);padding:36px 0;text-align:center;color:var(
 <div class="panel hide" id="myOrders"><h3>طلباتي</h3><div id="mo"></div></div>
 
 <div class="panel hide" id="adminBox"><h3>لوحة الإدارة — MR NIJI</h3>
-<p class="msg">كتب بانتظار المراجعة</p><div id="ab"></div>
-<p class="msg" style="margin-top:14px">طلبات بانتظار تأكيد الدفع</p><div id="ao"></div>
-<p class="msg" style="margin-top:14px">المستخدمون (اجعل أحدهم مؤلفاً)</p><div id="au"></div></div>
+<div id="atabs" style="display:flex;gap:6px;overflow-x:auto;margin:8px 0"></div><div id="adm"></div></div>
 </div></section>
 
 <section class="sec" id="about"><div class="w"><h2 class="t">عن NIJI APORIA</h2><div class="panel">
@@ -108,7 +108,7 @@ footer{border-top:1px solid var(--l);padding:36px 0;text-align:center;color:var(
 <p style="color:var(--g);letter-spacing:3px;direction:ltr;margin-top:8px">THE ART OF QUESTIONING.</p></div></div></section>
 
 <footer><div class="w"><div class="logo" style="display:inline-block">NIJI APORIA</div><p>NO IDENTITY JUST INFINITY</p>
-<p><a href="mailto:niji01@gmail.com">niji01@gmail.com</a> · <a href="https://wa.me/213558444691" target="_blank" rel="noopener">WhatsApp +213558444691</a></p><p>© <span id="yr"></span> NIJI APORIA</p></div></footer>
+<p><a href="mailto:niji01@gmail.com">niji01@gmail.com</a> · <a href="https://wa.me/213558444691" target="_blank" rel="noopener">WhatsApp +213558444691</a></p><p>© <span id="yr"></span> NIJI APORIA · v3</p></div></footer>
 
 <div class="modal" id="auth" onclick="if(event.target===this)this.classList.remove('on')"><div class="box">
 <button class="btn" onclick="this.closest('.modal').classList.remove('on')">إغلاق ×</button>
@@ -120,8 +120,11 @@ footer{border-top:1px solid var(--l);padding:36px 0;text-align:center;color:var(
 
 <div class="modal" id="pur" onclick="if(event.target===this)this.classList.remove('on')"><div class="box">
 <button class="btn" onclick="this.closest('.modal').classList.remove('on')">إغلاق ×</button>
-<h2 style="margin:12px 0;color:var(--g2)">طلب شراء</h2><p id="pt"></p>
-<p class="msg">الدفع يدوي: حوّل المبلغ إلى CCP / بريدي موب رقم <b id="payno"></b> ثم أرسل الإيصال على واتساب <a style="color:var(--g)" href="https://wa.me/213558444691" target="_blank" rel="noopener">+213558444691</a>. يفتح الكتاب في حسابك بعد تأكيدك الدفع.</p>
+<h2 id="pth" style="margin:12px 0;color:var(--g2)">طلب شراء</h2><p id="pt"></p>
+<div id="phys" class="hide"><input id="cn" placeholder="الاسم الكامل"><input id="cp" type="tel" placeholder="رقم الهاتف"><input id="cw" placeholder="الولاية"><textarea id="ca" rows="2" placeholder="العنوان الكامل"></textarea>
+<input id="cq" type="number" min="1" max="10" value="1" placeholder="الكمية">
+<select id="cm"><option value="cod">الدفع عند الاستلام</option><option value="manual">تحويل مسبق CCP / بريدي موب</option></select></div>
+<p id="pnote" class="msg">للدفع اليدوي: حوّل المبلغ إلى CCP / بريدي موب رقم <b id="payno"></b> ثم أرسل الإيصال على واتساب <a style="color:var(--g)" href="https://wa.me/213558444691" target="_blank" rel="noopener">+213558444691</a>. الكتاب الرقمي يفتح في حسابك بعد تأكيد الدفع.</p>
 <input id="pref" placeholder="مرجع الدفع إن وجد"><button class="btn p" onclick="buy()">إرسال الطلب</button><p id="pm" class="msg"></p></div></div>
 
 <div class="modal" id="fm" onclick="if(event.target===this)this.classList.remove('on')"><div class="box">
@@ -130,13 +133,14 @@ footer{border-top:1px solid var(--l);padding:36px 0;text-align:center;color:var(
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL = "dfjnqbjfnmatcdznrjka";
-const SUPABASE_KEY = ""sb_publishable_-qzPi5ArTH8hXEFmVAshnA_qnG9V70P"";
-const PAY = "0020889951 16"; // رقم CCP / بريدي موب
+// ====== ضع قيمك هنا (من config.js القديم أو Supabase > Project Settings > API) ======
+const SUPABASE_URL = "PUT_URL_HERE";
+const SUPABASE_KEY = "PUT_ANON_KEY_HERE";
+const PAY = "XXXX"; // رقم CCP / بريدي موب
 // =====================================================================================
 const EXTS = "pdf epub mobi azw3 djvu fb2 doc docx odt rtf txt ppt pptx xls xlsx csv zip rar 7z cbz mp3 m4a".split(" "), MAX = 50;
 const $ = i => document.getElementById(i);
-const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "'" }[c]));
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const money = n => Number(n || 0).toLocaleString("ar-DZ");
 const ext = f => (f.name.split(".").pop() || "").toLowerCase();
 let db, user, role = "reader", books = [], mode = "login", sel = null, tt;
@@ -190,10 +194,15 @@ async function me() {
 }
 
 async function loadBooks() {
-  const { data, error } = await db.from("books").select("id,seller_id,title,description,price,currency,cover_path,is_free").eq("status", "published").order("created_at", { ascending: false });
+  const { data, error } = await db.from("books").select("id,seller_id,title,description,price,currency,cover_path,is_free,book_type,stock,delivery_fee").eq("status", "published").order("created_at", { ascending: false });
   if (error) { $("bl").innerHTML = '<div class="card">تعذر تحميل الكتب: ' + esc(error.message) + "</div>"; return; }
   books = data || []; draw();
 }
+
+const ST = { pending: "قيد المراجعة", paid: "مدفوع", shipped: "تم الشحن", delivered: "تم التسليم", cancelled: "ملغى", published: "منشور", rejected: "مرفوض" };
+const TABS = [["ov", "نظرة عامة"], ["bk", "الكتب"], ["od", "الطلبات"], ["us", "المستخدمون"], ["ct", "التصنيفات"]];
+let tab = "ov";
+const isPh = b => b.book_type == "physical";
 
 function draw() {
   const q = $("bq").value.trim().toLowerCase(), f = $("bf").value, box = $("bl");
@@ -201,17 +210,26 @@ function draw() {
   box.innerHTML = ""; if (!list.length) { box.innerHTML = '<div class="card">لا توجد كتب منشورة حالياً.</div>'; return; }
   list.forEach(b => {
     const c = document.createElement("div"); c.className = "card";
+    const ph = isPh(b), soldout = ph && b.stock != null && b.stock <= 0;
     const cv = b.cover_path ? '<img alt="" src="' + esc(db.storage.from("book-covers").getPublicUrl(b.cover_path).data.publicUrl) + '">' : "NIJI APORIA";
-    c.innerHTML = '<div class="cover">' + cv + "</div><h3>" + esc(b.title) + '</h3><p class="msg">' + esc(b.description) + '</p><p style="color:var(--g2);font-weight:700;margin:6px 0">' + (b.is_free ? "مجاني" : money(b.price) + " " + esc(b.currency || "DZD")) + "</p>";
-    const x = document.createElement("button"); x.className = "btn p"; x.textContent = b.is_free ? "قراءة / تنزيل" : "شراء / فتح"; x.onclick = () => act(b);
+    c.innerHTML = '<div class="cover">' + cv + "</div><h3>" + esc(b.title) + '</h3><span class="msg" style="border:1px solid var(--l);padding:1px 8px;border-radius:20px">' + (ph ? "كتاب مطبوع + توصيل" : "كتاب رقمي (ملفات)") + '</span><p class="msg">' + esc(b.description) + '</p><p style="color:var(--g2);font-weight:700;margin:6px 0">' + (b.is_free ? "مجاني" : money(b.price) + " " + esc(b.currency || "DZD")) + (ph ? " + توصيل " + money(b.delivery_fee) : "") + "</p>";
+    const x = document.createElement("button"); x.className = "btn p"; x.disabled = soldout;
+    x.textContent = soldout ? "نفد المخزون" : ph ? "اطلب الآن" : b.is_free ? "قراءة / تنزيل" : "شراء / فتح"; x.onclick = () => act(b);
     c.append(x); box.append(c);
   });
 }
 
 async function act(b) {
   if (!user) return openAuth("login");
+  sel = b; say("pm", "");
+  if (isPh(b)) {
+    $("phys").classList.remove("hide"); $("pref").classList.add("hide"); $("pnote").classList.remove("hide");
+    $("pth").textContent = "طلب كتاب مطبوع"; $("pt").textContent = b.title + " — " + money(b.price) + " " + (b.currency || "DZD") + " + توصيل " + money(b.delivery_fee);
+    return $("pur").classList.add("on");
+  }
   if (b.is_free || (await db.rpc("has_access", { p_book: b.id })).data === true) return files(b);
-  sel = b; $("pt").textContent = b.title + " — " + money(b.price) + " " + (b.currency || "DZD"); $("pref").value = ""; say("pm", ""); $("pur").classList.add("on");
+  $("phys").classList.add("hide"); $("pref").classList.remove("hide"); $("pnote").classList.remove("hide"); $("pref").value = "";
+  $("pth").textContent = "طلب شراء كتاب رقمي"; $("pt").textContent = b.title + " — " + money(b.price) + " " + (b.currency || "DZD"); $("pur").classList.add("on");
 }
 
 async function files(b) {
@@ -229,30 +247,40 @@ async function files(b) {
 }
 
 async function buy() {
-  if (!sel) return;
-  const o = await db.from("orders").insert({ buyer_id: user.id, total_amount: 0, currency: sel.currency || "DZD", status: "pending", payment_reference: $("pref").value.trim() || null }).select("id").single();
+  if (!sel) return; const ph = isPh(sel);
+  const row = { buyer_id: user.id, total_amount: 0, currency: sel.currency || "DZD", status: "pending", payment_reference: $("pref").value.trim() || null, order_type: ph ? "physical" : "digital", payment_method: ph ? $("cm").value : "manual" };
+  let q = 1;
+  if (ph) {
+    row.customer_name = $("cn").value.trim(); row.customer_phone = $("cp").value.trim(); row.wilaya = $("cw").value.trim(); row.address = $("ca").value.trim();
+    q = Math.max(1, Math.min(10, parseInt($("cq").value) || 1));
+    if (!row.customer_name || !row.customer_phone || !row.wilaya || !row.address) return say("pm", "أكمل بيانات التوصيل كلها.", "bad");
+  }
+  const o = await db.from("orders").insert(row).select("id").single();
   if (o.error) return say("pm", o.error.message, "bad");
-  const i = await db.from("order_items").insert({ order_id: o.data.id, book_id: sel.id, seller_id: sel.seller_id, price: sel.price });
+  const i = await db.from("order_items").insert({ order_id: o.data.id, book_id: sel.id, seller_id: sel.seller_id, price: sel.price, quantity: q });
   if (i.error) return say("pm", i.error.message, "bad");
-  say("pm", "تم إرسال الطلب رقم " + String(o.data.id).slice(0, 8) + ". أرسل الإيصال على واتساب ليتم التأكيد.", "ok"); mine();
+  say("pm", "تم إرسال الطلب رقم " + String(o.data.id).slice(0, 8) + (ph ? ". سنتواصل معك لتأكيد التوصيل." : ". أرسل الإيصال على واتساب ليتم التأكيد."), "ok"); mine();
 }
 
 function tbl(h, rows) {
   return rows.length ? '<div style="overflow:auto"><table><tr>' + h.map(x => "<th>" + x + "</th>").join("") + "</tr>" + rows.map(r => "<tr>" + r.map(x => "<td>" + esc(x) + "</td>").join("") + "</tr>").join("") + "</table></div>" : '<p class="msg">لا توجد بيانات.</p>';
 }
 async function mine() {
-  const o = await db.from("orders").select("id,total_amount,currency,status").eq("buyer_id", user.id).order("created_at", { ascending: false });
-  $("mo").innerHTML = tbl(["الطلب", "المبلغ", "الحالة"], (o.data || []).map(r => [String(r.id).slice(0, 8), money(r.total_amount) + " " + (r.currency || ""), r.status]));
+  const o = await db.from("orders").select("id,total_amount,currency,status,order_type").eq("buyer_id", user.id).order("created_at", { ascending: false });
+  $("mo").innerHTML = tbl(["الطلب", "النوع", "المبلغ", "الحالة"], (o.data || []).map(r => [String(r.id).slice(0, 8), r.order_type == "physical" ? "مطبوع" : "رقمي", money(r.total_amount) + " " + (r.currency || ""), ST[r.status] || r.status]));
   if (role != "reader") {
-    const b = await db.from("books").select("title,status,is_free,price").eq("seller_id", user.id).order("created_at", { ascending: false });
-    $("mb").innerHTML = tbl(["العنوان", "الحالة", "النوع", "السعر"], (b.data || []).map(r => [r.title, r.status, r.is_free ? "مجاني" : "مدفوع", money(r.price)]));
+    const b = await db.from("books").select("title,status,is_free,price,book_type,stock").eq("seller_id", user.id).order("created_at", { ascending: false });
+    $("mb").innerHTML = tbl(["العنوان", "النوع", "الحالة", "السعر", "المخزون"], (b.data || []).map(r => [r.title, r.book_type == "physical" ? "مطبوع" : "رقمي", ST[r.status] || r.status, r.is_free ? "مجاني" : money(r.price), r.book_type == "physical" ? (r.stock ?? "—") : "—"]));
   }
 }
 
+function typ() { const ph = $("btype").value == "physical"; $("physf").classList.toggle("hide", !ph); $("digf").classList.toggle("hide", ph); if (ph) $("bfree").value = "0"; }
+
 async function publish() {
-  const t = $("bt").value.trim(), d = $("bd").value.trim(), c = $("bc").value, free = $("bfree").value == "1", p = Number($("bp").value || 0), fs = [...$("bfile").files], cv = $("bcov").files[0];
-  if (!t || !fs.length) return say("bm", "أدخل العنوان واختر ملفاً واحداً على الأقل.", "bad");
-  if (!free && p <= 0) return say("bm", "أدخل سعراً للكتاب المدفوع.", "bad");
+  const t = $("bt").value.trim(), d = $("bd").value.trim(), c = $("bc").value, ph = $("btype").value == "physical", free = !ph && $("bfree").value == "1", p = Number($("bp").value || 0), fs = ph ? [] : [...$("bfile").files], cv = $("bcov").files[0];
+  if (!t) return say("bm", "أدخل عنوان الكتاب.", "bad");
+  if (!ph && !fs.length) return say("bm", "اختر ملفاً واحداً على الأقل للكتاب الرقمي.", "bad");
+  if (!free && p <= 0) return say("bm", "أدخل سعراً للكتاب.", "bad");
   for (const f of fs) {
     if (!EXTS.includes(ext(f))) return say("bm", "صيغة غير مدعومة: " + f.name + "\nالمدعوم: " + EXTS.join(", "), "bad");
     if (f.size > MAX * 1048576) return say("bm", f.name + " أكبر من " + MAX + " ميغابايت.", "bad");
@@ -269,31 +297,57 @@ async function publish() {
     let cp = null;
     if (cv) { cp = user.id + "/" + Date.now() + "." + (ext(cv) || "jpg"); const r = await db.storage.from("book-covers").upload(cp, cv, { contentType: cv.type || "image/jpeg" }); if (r.error) throw r.error; }
     const slug = (t.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "book") + "-" + Date.now().toString(36);
-    const b = await db.from("books").insert({ seller_id: user.id, category_id: c || null, title: t, slug, description: d, language: "ar", price: free ? 0 : p, currency: "DZD", cover_path: cp, status: role == "admin" ? "published" : "pending", is_free: free }).select("id").single();
+    const b = await db.from("books").insert({ seller_id: user.id, category_id: c || null, title: t, slug, description: d, language: "ar", price: free ? 0 : p, currency: "DZD", cover_path: cp, status: role == "admin" ? "published" : "pending", is_free: free, book_type: ph ? "physical" : "digital", stock: ph ? parseInt($("bstock").value || 0) : null, delivery_fee: ph ? Number($("bship").value || 0) : 0 }).select("id").single();
     if (b.error) throw b.error;
-    const r = await db.from("book_files").insert(up.map(u => ({ ...u, book_id: b.data.id }))); if (r.error) throw r.error;
+    if (up.length) { const r = await db.from("book_files").insert(up.map(u => ({ ...u, book_id: b.data.id }))); if (r.error) throw r.error; }
     say("bm", role == "admin" ? "تم نشر الكتاب." : "أُرسل الكتاب للمراجعة.", "ok");
-    ["bt", "bd", "bp", "bfile", "bcov"].forEach(i => $(i).value = ""); mine(); loadBooks(); if (role == "admin") admin();
+    ["bt", "bd", "bp", "bfile", "bcov", "bstock", "bship"].forEach(i => $(i).value = ""); mine(); loadBooks(); if (role == "admin") admin();
   } catch (e) { say("bm", "تعذر النشر: " + e.message, "bad"); }
   $("bgo").disabled = false;
 }
 
-function row(t, btns) {
-  const p = document.createElement("p"); p.style.margin = "10px 0"; p.append(t + " ");
-  btns.forEach(([l, c, f]) => { const b = document.createElement("button"); b.className = "btn " + c; b.style.margin = "2px"; b.textContent = l; b.onclick = async () => { const e = await f(); toast(e ? e.message : "تم"); admin(); loadBooks(); }; p.append(b); });
-  return p;
-}
-async function admin() {
-  const bx = $("ab"), ox = $("ao"), ux = $("au"); bx.innerHTML = ox.innerHTML = ux.innerHTML = "";
-  const up = (tb, id, v) => async () => (await db.from(tb).update(v).eq("id", id)).error;
-  const b = await db.from("books").select("id,title,is_free,price").eq("status", "pending");
-  (b.data || []).forEach(x => bx.append(row(x.title + " — " + (x.is_free ? "مجاني" : money(x.price)), [["نشر", "p", up("books", x.id, { status: "published" })], ["رفض", "d", up("books", x.id, { status: "rejected" })]])));
-  if (!b.data?.length) bx.innerHTML = '<p class="msg">لا توجد كتب معلّقة.</p>';
-  const o = await db.from("orders").select("id,total_amount,currency,payment_reference").eq("status", "pending");
-  (o.data || []).forEach(x => ox.append(row(String(x.id).slice(0, 8) + " — " + money(x.total_amount) + " " + (x.currency || "") + " — " + (x.payment_reference || "بدون مرجع"), [["تأكيد الدفع", "p", up("orders", x.id, { status: "paid" })], ["إلغاء", "d", up("orders", x.id, { status: "cancelled" })]])));
-  if (!o.data?.length) ox.innerHTML = '<p class="msg">لا توجد طلبات معلّقة.</p>';
-  const u = await db.from("profiles").select("id,full_name,role").order("created_at", { ascending: false }).limit(50);
-  (u.data || []).forEach(x => ux.append(row((x.full_name || String(x.id).slice(0, 8)) + " (" + x.role + ")", [["مؤلف", "p", up("profiles", x.id, { role: "author" })], ["قارئ", "d", up("profiles", x.id, { role: "reader" })]])));
+async function admin(t) {
+  if (t) tab = t;
+  const T = $("atabs"); T.innerHTML = "";
+  TABS.forEach(([k, l]) => { const b = document.createElement("button"); b.className = "btn" + (k == tab ? " p" : ""); b.textContent = l; b.onclick = () => admin(k); T.append(b); });
+  const [u, b, o, it, c] = await Promise.all([
+    db.from("profiles").select("id,full_name,role,created_at").order("created_at", { ascending: false }).limit(500),
+    db.from("books").select("id,seller_id,title,status,book_type,is_free,price,stock,delivery_fee").order("created_at", { ascending: false }).limit(500),
+    db.from("orders").select("*").order("created_at", { ascending: false }).limit(500),
+    db.from("order_items").select("order_id,book_id,quantity").limit(3000),
+    db.from("categories").select("id,name,is_active").order("name")]);
+  const U = u.data || [], B = b.data || [], O = o.data || [], I = it.data || [], C = c.data || [];
+  const nm = {}, bt = {}; U.forEach(x => nm[x.id] = x.full_name || String(x.id).slice(0, 8)); B.forEach(x => bt[x.id] = x);
+  const A = $("adm"); A.innerHTML = "";
+  const card = h => { const d = document.createElement("div"); d.className = "card"; d.style.marginTop = "10px"; d.innerHTML = h; A.append(d); return d; };
+  const btn = (d, l, c, f) => { const x = document.createElement("button"); x.className = "btn " + c; x.style.margin = "3px"; x.textContent = l; x.onclick = f; d.append(x); };
+  const upd = (tb, id, v) => async () => { const r = await db.from(tb).update(v).eq("id", id); toast(r.error ? r.error.message : "تم"); admin(); loadBooks(); };
+  if (tab == "ov") {
+    const rev = O.filter(x => ["paid", "shipped", "delivered"].includes(x.status)).reduce((s, x) => s + Number(x.total_amount || 0), 0);
+    const S = [["المستخدمون", U.length], ["المؤلفون", U.filter(x => ["author", "seller"].includes(x.role)).length], ["كتب منشورة", B.filter(x => x.status == "published").length], ["كتب بانتظار المراجعة", B.filter(x => x.status == "pending").length], ["كتب رقمية", B.filter(x => x.book_type != "physical").length], ["كتب مطبوعة", B.filter(x => x.book_type == "physical").length], ["طلبات بانتظار التأكيد", O.filter(x => x.status == "pending").length], ["مطبوعات للشحن", O.filter(x => x.status == "paid" && x.order_type == "physical").length], ["إجمالي الطلبات", O.length], ["الإيرادات المؤكدة (دج)", money(rev)]];
+    A.innerHTML = '<div class="grid" style="margin-top:10px">' + S.map(s => '<div class="card"><p class="msg">' + s[0] + '</p><h3 style="font-size:24px;margin:0">' + s[1] + "</h3></div>").join("") + "</div>";
+  }
+  if (tab == "bk") { if (!B.length) A.innerHTML = '<p class="msg">لا توجد كتب.</p>';
+    B.forEach(x => { const d = card("<h3>" + esc(x.title) + '</h3><p class="msg">' + (x.book_type == "physical" ? "مطبوع — مخزون: " + (x.stock ?? "—") + " — توصيل: " + money(x.delivery_fee) : "رقمي") + " · " + (x.is_free ? "مجاني" : money(x.price) + " دج") + " · المؤلف: " + esc(nm[x.seller_id] || "—") + " · الحالة: " + (ST[x.status] || x.status) + "</p>");
+      if (x.status != "published") btn(d, "نشر", "p", upd("books", x.id, { status: "published" }));
+      if (x.status != "rejected") btn(d, "رفض", "d", upd("books", x.id, { status: "rejected" }));
+      btn(d, "حذف", "d", async () => { if (confirm("حذف الكتاب نهائياً؟")) { const r = await db.from("books").delete().eq("id", x.id); toast(r.error ? r.error.message : "تم الحذف"); admin(); loadBooks(); } }); }); }
+  if (tab == "od") { if (!O.length) A.innerHTML = '<p class="msg">لا توجد طلبات.</p>';
+    O.forEach(x => {
+      const its = I.filter(i => i.order_id == x.id).map(i => (bt[i.book_id]?.title || "كتاب") + " ×" + (i.quantity || 1)).join("، "), ph = x.order_type == "physical";
+      const d = card("<h3>#" + String(x.id).slice(0, 8) + " — " + money(x.total_amount) + ' دج</h3><p class="msg">' + esc(its) + "<br>المشتري: " + esc(nm[x.buyer_id] || "—") + " · " + (ph ? "مطبوع" : "رقمي") + " · الدفع: " + (x.payment_method == "cod" ? "عند الاستلام" : "تحويل يدوي") + (x.payment_reference ? " · المرجع: " + esc(x.payment_reference) : "") + (ph ? "<br>" + esc(x.customer_name) + " — " + esc(x.customer_phone) + " — " + esc(x.wilaya) + " — " + esc(x.address) : "") + "<br>" + new Date(x.created_at).toLocaleString("ar-DZ") + "</p>");
+      const s = document.createElement("select");
+      ["pending", "paid", "shipped", "delivered", "cancelled"].forEach(k => { const e = document.createElement("option"); e.value = k; e.textContent = ST[k]; if (k == x.status) e.selected = true; s.append(e); }); d.append(s);
+      btn(d, "حفظ الحالة", "p", async () => { const r = await db.from("orders").update({ status: s.value }).eq("id", x.id); toast(r.error ? r.error.message : "تم تحديث الحالة"); admin(); });
+      if (ph && x.customer_phone) { const a = document.createElement("a"); a.className = "btn"; a.target = "_blank"; a.rel = "noopener"; a.style.margin = "3px"; a.href = "https://wa.me/" + x.customer_phone.replace(/\D/g, "").replace(/^0/, "213"); a.textContent = "مراسلة العميل"; d.append(a); }
+    }); }
+  if (tab == "us") U.forEach(x => { const d = card("<h3>" + esc(x.full_name || String(x.id).slice(0, 8)) + '</h3><p class="msg">الدور: ' + x.role + " · طلباته: " + O.filter(y => y.buyer_id == x.id).length + " · كتبه: " + B.filter(y => y.seller_id == x.id).length + "</p>");
+    if (x.role == "admin") return; btn(d, "مؤلف", "p", upd("profiles", x.id, { role: "author" })); btn(d, "قارئ", "d", upd("profiles", x.id, { role: "reader" })); });
+  if (tab == "ct") {
+    const d = card("<h3>إضافة تصنيف</h3>"); const i = document.createElement("input"); i.placeholder = "اسم التصنيف"; d.append(i);
+    btn(d, "إضافة", "p", async () => { const n = i.value.trim(); if (!n) return; const r = await db.from("categories").insert({ name: n, slug: n.toLowerCase().replace(/\s+/g, "-") + "-" + Date.now().toString(36) }); toast(r.error ? r.error.message : "تمت الإضافة"); admin(); });
+    C.forEach(x => { const e = card("<h3>" + esc(x.name) + '</h3><p class="msg">' + (x.is_active ? "مفعّل" : "معطّل") + "</p>"); btn(e, x.is_active ? "تعطيل" : "تفعيل", "", upd("categories", x.id, { is_active: !x.is_active })); });
+  }
 }
 
 (async () => {
